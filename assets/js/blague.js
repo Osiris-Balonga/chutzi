@@ -100,6 +100,7 @@ let lastIdleAnimationName = null;
 let dialogCloseTimer = null;
 let musicPausedByVisibility = false;
 let musicDuckTimer = null;
+let reactionTimer = null;
 
 function normalizeText(text) {
   return text
@@ -226,6 +227,11 @@ function pauseMusic(reset = false) {
   }
 }
 
+function stopMascotReaction() {
+  window.clearTimeout(reactionTimer);
+  mascot.classList.remove("is-reacting-laugh");
+}
+
 function updateAudioControls() {
   const allDisabled = !musicEnabled && !effectsEnabled;
   const partiallyEnabled = musicEnabled !== effectsEnabled;
@@ -293,6 +299,10 @@ function closeAudioDialog() {
 }
 
 function showView(name) {
+  if (name !== "revealed") {
+    stopMascotReaction();
+  }
+
   loadingView.hidden = name !== "loading";
   jokeView.hidden = name !== "question" && name !== "revealed";
   errorView.hidden = name !== "error";
@@ -441,6 +451,9 @@ function startGame() {
 function revealAnswer() {
   cancelIdleAnimation(true);
   showView("revealed");
+  stopMascotReaction();
+  mascot.classList.add("is-reacting-laugh");
+  reactionTimer = window.setTimeout(stopMascotReaction, 1240);
 
   const laugh = Math.random() < 0.24 ? sounds.mischievousLaugh : sounds.laugh;
   playEffect(laugh, { maxDuration: 4200, duckDuration: 3800 });
@@ -453,6 +466,7 @@ function loadAnotherJoke() {
 
 function quitGame() {
   cancelIdleAnimation(true);
+  stopMascotReaction();
   pauseMusic(true);
   stopAllEffects();
   loadedJokeCount = 0;
@@ -514,6 +528,15 @@ document.addEventListener("visibilitychange", () => {
 
   musicPausedByVisibility = false;
   scheduleIdleAnimation();
+});
+
+backgroundMusic.addEventListener("ended", () => {
+  if (!shouldPlayMusic()) {
+    return;
+  }
+
+  backgroundMusic.currentTime = 0;
+  playMusic();
 });
 
 updateAudioControls();
