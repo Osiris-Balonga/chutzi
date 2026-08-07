@@ -322,7 +322,8 @@ p {
 
 .audio-setting:focus-visible,
 .audio-close:focus-visible {
-  outline-color: var(--color-ink);
+  outline: 3px solid var(--color-primary-dark);
+  outline-offset: 3px;
 }
 
 .audio-setting-icon {
