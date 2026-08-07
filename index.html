@@ -19,7 +19,13 @@
         <span class="brand-mark" aria-hidden="true">R</span>
         <span>Rigolo</span>
       </a>
-      <span class="api-status" aria-label="Blagues sécurisées">Mode tout public</span>
+      <div class="header-tools">
+        <span class="api-status" aria-label="Blagues sécurisées">Tout public</span>
+        <button class="audio-toggle" id="audio-toggle" type="button" aria-label="Couper les sons" aria-pressed="false">
+          <span class="sound-on" aria-hidden="true">♪</span>
+          <span class="sound-off" aria-hidden="true">×</span>
+        </button>
+      </div>
     </header>
 
     <div class="experience">
@@ -30,7 +36,7 @@
         <button class="button button-primary" id="start-button" type="button">Commencer</button>
       </section>
 
-      <div class="mascot-zone" aria-hidden="true">
+      <div class="mascot-zone" id="mascot-zone" aria-hidden="true">
         <div class="mascot" id="mascot">
           <span class="mascot-sprout"><i></i><i></i></span>
           <span class="mascot-brow mascot-brow-left"></span>
@@ -46,7 +52,7 @@
         </div>
       </div>
 
-      <section class="game-panel" id="game-panel" aria-labelledby="game-title" hidden>
+      <section class="game-panel" id="game-panel" aria-label="Jeu de blagues" hidden>
         <div class="status-region" id="status-region" aria-live="polite" aria-atomic="true">
           <div class="loading-view" id="loading-view" hidden>
             <span class="spinner" aria-hidden="true"></span>

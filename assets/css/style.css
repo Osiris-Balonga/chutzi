@@ -93,6 +93,12 @@ p {
   min-height: 72px;
 }
 
+.header-tools {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
 .brand {
   display: inline-flex;
   align-items: center;
@@ -123,6 +129,60 @@ p {
   font-size: 0.72rem;
 }
 
+.audio-toggle {
+  position: relative;
+  display: grid;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--color-ink);
+  color: var(--color-white);
+  box-shadow: 0 4px 0 rgb(255 255 255 / 20%);
+  cursor: pointer;
+  font-size: 1.35rem;
+  font-weight: 900;
+  transition-property: transform, background-color, box-shadow;
+  transition-duration: 160ms;
+  transition-timing-function: var(--ease-out);
+}
+
+.audio-toggle:active {
+  transform: translateY(3px) scale(0.96);
+  box-shadow: 0 1px 0 rgb(255 255 255 / 20%);
+}
+
+.sound-off {
+  position: absolute;
+  opacity: 0;
+  scale: 0.25;
+  filter: blur(4px);
+}
+
+.sound-on,
+.sound-off {
+  transition-property: opacity, scale, filter;
+  transition-duration: 300ms;
+  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+.audio-toggle.is-muted {
+  background: var(--color-danger);
+}
+
+.audio-toggle.is-muted .sound-on {
+  opacity: 0;
+  scale: 0.25;
+  filter: blur(4px);
+}
+
+.audio-toggle.is-muted .sound-off {
+  opacity: 1;
+  scale: 1;
+  filter: blur(0);
+}
+
 .experience {
   position: relative;
   min-height: calc(100svh - 132px);
@@ -133,6 +193,10 @@ p {
   z-index: 3;
   padding-top: clamp(36px, 8vh, 82px);
   text-align: center;
+}
+
+.welcome-panel.is-returning {
+  animation: welcome-return 380ms 180ms var(--ease-out) both;
 }
 
 .welcome-intro {
@@ -199,6 +263,15 @@ h1 {
   height: 210px;
   transform: translateX(-50%);
   transform-origin: center top;
+  transition-property: top, transform;
+  transition-duration: 620ms;
+  transition-timing-function: var(--ease-out);
+  will-change: transform;
+}
+
+.app:not([data-state="welcome"]) .mascot-zone {
+  top: 12px;
+  transform: translateX(-50%) scale(0.55);
 }
 
 .mascot {
@@ -208,6 +281,10 @@ h1 {
   border-radius: 16px 16px 48% 48%;
   background: var(--color-primary);
   box-shadow: inset 0 -12px 0 var(--color-primary-dark), 0 10px 0 rgb(7 15 54 / 18%);
+  transform-origin: center bottom;
+  transition-property: transform, box-shadow;
+  transition-duration: 260ms;
+  transition-timing-function: var(--ease-out);
 }
 
 .mascot-sprout {
@@ -265,6 +342,7 @@ h1 {
   border-radius: 50%;
   background: var(--color-white);
   transform-origin: center;
+  animation: blink 5.4s 1.2s infinite;
 }
 
 .mascot-eye-left {
@@ -333,6 +411,56 @@ h1 {
   border-bottom: 5px solid var(--color-ink);
   border-radius: 50%;
   transform: translateX(-50%);
+  transition-property: background-color, transform;
+  transition-duration: 220ms;
+  transition-timing-function: var(--ease-out);
+}
+
+.app[data-state="loading"] .mascot {
+  animation: mascot-think 1.8s var(--ease-out) infinite;
+}
+
+.app[data-state="loading"] .mascot-brow-left {
+  transform: rotate(10deg) translateY(4px);
+}
+
+.app[data-state="loading"] .mascot-brow-right {
+  transform: rotate(-10deg) translateY(4px);
+}
+
+.app[data-state="question"] .mascot {
+  transform: rotate(-3deg);
+}
+
+.app[data-state="question"] .mascot-mouth {
+  width: 18px;
+  height: 18px;
+  border: 5px solid var(--color-ink);
+  border-radius: 50%;
+}
+
+.app[data-state="revealed"] .mascot {
+  animation: mascot-laugh 560ms var(--ease-out) 2;
+}
+
+.app[data-state="revealed"] .mascot-mouth {
+  width: 58px;
+  height: 34px;
+  border: 0;
+  border-radius: 4px 4px 999px 999px;
+  background: var(--color-ink);
+}
+
+.app[data-state="error"] .mascot {
+  transform: translateY(5px) rotate(4deg);
+}
+
+.app[data-state="error"] .mascot-mouth {
+  width: 34px;
+  height: 16px;
+  border-top: 5px solid var(--color-ink);
+  border-bottom: 0;
+  border-radius: 50%;
 }
 
 .game-panel {
@@ -340,6 +468,7 @@ h1 {
   z-index: 4;
   width: 100%;
   padding: 152px 0 28px;
+  animation: game-panel-in 440ms 330ms var(--ease-out) both;
 }
 
 .status-region {
@@ -404,6 +533,7 @@ h1 {
   border-radius: var(--radius-control);
   padding: 18px;
   background: var(--color-primary-soft);
+  animation: answer-in 360ms var(--ease-out) both;
 }
 
 .joke-answer p {
@@ -449,6 +579,51 @@ h1 {
 
 @keyframes spin {
   to { transform: rotate(360deg); }
+}
+
+@keyframes blink {
+  0%, 44%, 48%, 100% { transform: scaleY(1); }
+  46% { transform: scaleY(0.08); }
+}
+
+@keyframes mascot-think {
+  0%, 100% { transform: translateY(0) rotate(-1deg); }
+  50% { transform: translateY(-6px) rotate(2deg); }
+}
+
+@keyframes mascot-laugh {
+  0%, 100% { transform: translateY(0) rotate(0); }
+  35% { transform: translateY(-9px) rotate(-3deg); }
+  70% { transform: translateY(-4px) rotate(3deg); }
+}
+
+@keyframes game-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes answer-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+    filter: blur(4px);
+  }
+}
+
+@keyframes welcome-return {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+    filter: blur(4px);
+  }
 }
 
 @media (min-width: 640px) {
