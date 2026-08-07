@@ -159,8 +159,10 @@ async function chargerBlague() {
 }
 
 function commencer() {
+  app.classList.add("is-entering");
   welcomePanel.hidden = true;
   gamePanel.hidden = false;
+  window.setTimeout(() => app.classList.remove("is-entering"), 820);
   void chargerBlague();
 }
 
@@ -175,6 +177,7 @@ function quitter() {
   laughSound.currentTime = 0;
   gamePanel.hidden = true;
   welcomePanel.hidden = false;
+  app.classList.remove("is-entering");
   app.dataset.state = "welcome";
   welcomePanel.classList.remove("is-returning");
   void welcomePanel.offsetWidth;

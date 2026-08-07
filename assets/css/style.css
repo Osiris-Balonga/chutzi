@@ -74,7 +74,7 @@ p {
 .app {
   position: relative;
   display: grid;
-  grid-template-rows: 64px minmax(0, 1fr) 42px;
+  grid-template-rows: 64px minmax(0, 1fr);
   width: min(100%, 820px);
   height: 100svh;
   min-height: 480px;
@@ -250,28 +250,29 @@ h1 {
 .mascot-zone {
   position: absolute;
   z-index: 2;
-  top: calc(100% - 120px);
+  top: 28px;
   left: 50%;
   width: 210px;
   height: 210px;
-  transform: translateX(-50%);
+  transform: translateX(-50%) translateY(calc(100svh - 212px));
   transform-origin: center top;
-  transition-property: top, transform;
-  transition-duration: 620ms;
-  transition-timing-function: var(--ease-out);
+  transition: transform 420ms var(--ease-out);
   will-change: transform;
 }
 
 .app:not([data-state="welcome"]) .mascot-zone {
-  top: 28px;
-  transform: translateX(-50%) scale(0.48);
+  transform: translateX(-50%) translateY(0) scale(0.48);
+}
+
+.app.is-entering .mascot-zone {
+  animation: mascot-jump-to-stage 780ms var(--ease-out) both;
 }
 
 .mascot {
   position: relative;
   width: 210px;
   height: 200px;
-  border-radius: 50% 50% 48% 48% / 45% 45% 55% 55%;
+  border-radius: 42% 42% 38% 38% / 34% 34% 60% 60%;
   background: var(--color-primary);
   box-shadow: inset 0 -12px 0 var(--color-primary-dark), 0 10px 0 rgb(7 15 54 / 18%);
   transform-origin: center bottom;
@@ -283,14 +284,13 @@ h1 {
 .mascot-hair {
   position: absolute;
   z-index: 0;
-  top: -31px;
+  top: -42px;
   left: 50%;
-  width: 42px;
-  height: 52px;
-  border-top: 13px solid var(--color-primary);
-  border-right: 13px solid var(--color-primary);
-  border-radius: 0 90% 18% 90%;
-  transform: translateX(-50%) rotate(14deg);
+  width: 52px;
+  height: 60px;
+  background: var(--color-primary);
+  clip-path: path("M 28 58 C 27 46 22 39 12 34 C 4 30 2 22 6 15 C 10 9 18 8 24 12 C 37 20 46 33 45 45 C 44 54 37 60 28 58 Z");
+  transform: translateX(-50%) rotate(-8deg);
   transform-origin: 50% 100%;
   animation: hair-wave 5.4s 800ms var(--ease-out) infinite;
 }
@@ -455,7 +455,7 @@ h1 {
   height: 100%;
   align-items: flex-start;
   padding: 132px 0 10px;
-  animation: game-panel-in 440ms 330ms var(--ease-out) both;
+  animation: game-panel-in 400ms 620ms var(--ease-out) both;
 }
 
 .status-region {
@@ -557,9 +557,20 @@ h1 {
 }
 
 .app-footer {
+  position: absolute;
+  right: 20px;
+  bottom: 0;
+  left: 20px;
   min-height: 42px;
   color: var(--color-white);
   font-size: 0.72rem;
+  opacity: 1;
+  transition: opacity 180ms ease-out;
+}
+
+.app[data-state="welcome"] .app-footer {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .app-footer a {
@@ -579,9 +590,27 @@ h1 {
 }
 
 @keyframes hair-wave {
-  0%, 42%, 58%, 100% { transform: translateX(-50%) rotate(14deg); }
-  48% { transform: translateX(-50%) rotate(-6deg); }
-  53% { transform: translateX(-50%) rotate(22deg); }
+  0%, 42%, 58%, 100% { transform: translateX(-50%) rotate(-8deg); }
+  48% { transform: translateX(-50%) rotate(-18deg); }
+  53% { transform: translateX(-50%) rotate(3deg); }
+}
+
+@keyframes mascot-jump-to-stage {
+  0% {
+    transform: translateX(-50%) translateY(calc(100svh - 212px)) scale(1);
+  }
+  14% {
+    transform: translateX(-50%) translateY(calc(100svh - 202px)) scaleX(1.07) scaleY(0.9);
+  }
+  58% {
+    transform: translateX(-50%) translateY(-22px) scaleX(0.43) scaleY(0.55);
+  }
+  80% {
+    transform: translateX(-50%) translateY(8px) scaleX(0.54) scaleY(0.43);
+  }
+  100% {
+    transform: translateX(-50%) translateY(0) scale(0.48);
+  }
 }
 
 @keyframes mascot-think {
@@ -639,6 +668,11 @@ h1 {
 
   .joke-actions {
     grid-template-columns: 1.25fr 0.75fr;
+  }
+
+  .app-footer {
+    right: 32px;
+    left: 32px;
   }
 }
 
