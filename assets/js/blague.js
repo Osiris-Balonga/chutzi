@@ -85,7 +85,7 @@ const soundStopTimers = new WeakMap();
 const idleAnimations = [
   { name: "look", className: "is-idle-looking", duration: 1900 },
   { name: "look", className: "is-idle-looking", duration: 1900 },
-  { name: "hop", className: "is-idle-hopping", duration: 900, sound: sounds.jump, soundChance: 0.45 },
+  { name: "hop", className: "is-idle-hopping", duration: 1120, sound: sounds.jump, soundChance: 0.45 },
   { name: "hmm", className: "is-idle-thinking", duration: 2400, sound: sounds.hmm, soundChance: 0.7 },
   { name: "chat", className: "is-idle-chatting", duration: 1700, sound: sounds.talking, soundChance: 0.55 },
   { name: "doze", className: "is-idle-dozing", duration: 3200, sound: sounds.snoring, soundChance: 0.55 },
@@ -95,7 +95,7 @@ const idleAnimations = [
 const idleClassNames = [...new Set(idleAnimations.map((animation) => animation.className))];
 const developerReactions = {
   look: { className: "is-idle-looking", duration: 1900 },
-  hop: { className: "is-idle-hopping", duration: 900, sound: sounds.jump },
+  hop: { className: "is-idle-hopping", duration: 1120, sound: sounds.jump },
   think: { className: "is-idle-thinking", duration: 2400, sound: sounds.hmm },
   chat: { className: "is-idle-chatting", duration: 1700, sound: sounds.talking },
   sleep: { className: "is-idle-dozing", duration: 3200, sound: sounds.snoring },
@@ -571,7 +571,7 @@ function startGame() {
   void loadJoke();
   playMusic();
   playEffect(sounds.jump, { maxDuration: 1200, duckDuration: 1000 });
-  window.setTimeout(() => app.classList.remove("is-entering"), 820);
+  window.setTimeout(() => app.classList.remove("is-entering"), 940);
 }
 
 function revealAnswer() {
