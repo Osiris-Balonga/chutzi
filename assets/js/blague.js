@@ -31,7 +31,7 @@ const jokeActions = document.querySelector("#joke-actions");
 const audioToggle = document.querySelector("#audio-toggle");
 const clickSound = new Audio("assets/audio/click.wav");
 const laughSound = new Audio("assets/audio/people-laughing.mp3");
-const AUDIO_STORAGE_KEY = "rigolo-audio-muted";
+const AUDIO_STORAGE_KEY = "chutzi-audio-muted";
 
 clickSound.preload = "auto";
 clickSound.volume = 0.34;

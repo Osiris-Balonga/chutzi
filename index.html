@@ -3,9 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Rigolo te raconte une blague aléatoire à révéler quand tu es prêt.">
+  <meta name="description" content="Chutzi te raconte une blague aléatoire à révéler quand tu es prêt.">
   <meta name="theme-color" content="#b2eb06">
-  <title>Rigolo - Une blague pour toi</title>
+  <link rel="icon" href="assets/images/brand/chutzi-icon.png" type="image/png">
+  <title>Chutzi - Une blague pour toi</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
@@ -15,12 +16,11 @@
 <body>
   <main class="app" id="app" data-state="welcome">
     <header class="app-header">
-      <a class="brand" href="index.html" aria-label="Rigolo, retour à l'accueil">
-        <span class="brand-mark" aria-hidden="true">R</span>
-        <span>Rigolo</span>
+      <a class="brand" href="index.html" aria-label="Chutzi, retour à l'accueil">
+        <img class="brand-logo" src="assets/images/brand/chutzi-logo.png" alt="" width="44" height="44">
+        <span>Chutzi</span>
       </a>
       <div class="header-tools">
-        <span class="api-status" aria-label="Blagues sécurisées">Tout public</span>
         <button class="audio-toggle" id="audio-toggle" type="button" aria-label="Couper les sons" aria-pressed="false">
           <span class="sound-on" aria-hidden="true">♪</span>
           <span class="sound-off" aria-hidden="true">×</span>
@@ -32,13 +32,13 @@
       <section class="welcome-panel" id="welcome-panel" aria-labelledby="welcome-title">
         <p class="welcome-intro">Besoin d'une petite pause ?</p>
         <h1 id="welcome-title">Prêt à rire<br>un peu ?</h1>
-        <p class="welcome-copy">Rigolo a toujours une blague sous la main. À toi de découvrir la chute.</p>
+        <p class="welcome-copy">Chutzi a toujours une blague sous la main. À toi de découvrir la chute.</p>
         <button class="button button-primary" id="start-button" type="button">Commencer</button>
       </section>
 
       <div class="mascot-zone" id="mascot-zone" aria-hidden="true">
         <div class="mascot" id="mascot">
-          <span class="mascot-sprout"><i></i><i></i></span>
+          <span class="mascot-hair"></span>
           <span class="mascot-brow mascot-brow-left"></span>
           <span class="mascot-brow mascot-brow-right"></span>
           <span class="mascot-eye mascot-eye-left">
@@ -57,7 +57,7 @@
           <div class="loading-view" id="loading-view" hidden>
             <span class="spinner" aria-hidden="true"></span>
             <h2 id="game-title">Je cherche la bonne...</h2>
-            <p>Rigolo fouille dans sa réserve de blagues.</p>
+            <p>Chutzi fouille dans sa réserve de blagues.</p>
           </div>
 
           <article class="joke-view" id="joke-view" hidden>
@@ -88,8 +88,8 @@
     </div>
 
     <footer class="app-footer">
-      <span>Des blagues surprises, sans inscription.</span>
-      <a href="https://jokeapi.dev/" target="_blank" rel="noreferrer">Propulsé par JokeAPI</a>
+      <span>Une blague, une chute.</span>
+      <a href="https://jokeapi.dev/" target="_blank" rel="noreferrer">JokeAPI</a>
     </footer>
   </main>
 </body>

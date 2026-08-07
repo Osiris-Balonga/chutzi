@@ -33,8 +33,9 @@ html {
 
 body {
   min-width: 320px;
-  min-height: 100vh;
+  min-height: 100svh;
   margin: 0;
+  overflow: hidden;
   background:
     radial-gradient(circle at 50% 28%, #a9b5ff 0, var(--color-secondary) 32%, #4f5c9e 72%, var(--color-ink) 125%);
   font-weight: 700;
@@ -72,8 +73,11 @@ p {
 
 .app {
   position: relative;
+  display: grid;
+  grid-template-rows: 64px minmax(0, 1fr) 42px;
   width: min(100%, 820px);
-  min-height: 100svh;
+  height: 100svh;
+  min-height: 480px;
   margin-inline: auto;
   padding: 0 20px;
   overflow: hidden;
@@ -90,7 +94,7 @@ p {
 }
 
 .app-header {
-  min-height: 72px;
+  min-height: 64px;
 }
 
 .header-tools {
@@ -110,23 +114,11 @@ p {
   text-decoration: none;
 }
 
-.brand-mark {
-  display: grid;
-  width: 40px;
-  aspect-ratio: 1;
-  place-items: center;
-  border-radius: 12px;
-  background: var(--color-primary);
-  color: var(--color-ink);
-  box-shadow: 0 4px 0 var(--color-primary-dark);
-}
-
-.api-status {
-  border-radius: 999px;
-  padding: 7px 10px;
-  background: rgb(7 15 54 / 72%);
-  color: var(--color-white);
-  font-size: 0.72rem;
+.brand-logo {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  filter: drop-shadow(0 3px 0 rgb(7 15 54 / 18%));
 }
 
 .audio-toggle {
@@ -185,13 +177,14 @@ p {
 
 .experience {
   position: relative;
-  min-height: calc(100svh - 132px);
+  min-height: 0;
+  overflow: hidden;
 }
 
 .welcome-panel {
   position: relative;
   z-index: 3;
-  padding-top: clamp(36px, 8vh, 82px);
+  padding-top: clamp(20px, 6svh, 58px);
   text-align: center;
 }
 
@@ -206,19 +199,19 @@ p {
 }
 
 h1 {
-  margin-bottom: 18px;
+  margin-bottom: 14px;
   color: var(--color-white);
-  font-size: clamp(3rem, 15vw, 5.25rem);
-  line-height: 0.92;
+  font-size: clamp(2.9rem, 12vw, 4.6rem);
+  line-height: 0.94;
   letter-spacing: -0.04em;
   font-weight: 900;
 }
 
 .welcome-copy {
   max-width: 34ch;
-  margin: 0 auto 24px;
+  margin: 0 auto 18px;
   color: #f5f6ff;
-  line-height: 1.55;
+  line-height: 1.4;
 }
 
 .button {
@@ -257,7 +250,7 @@ h1 {
 .mascot-zone {
   position: absolute;
   z-index: 2;
-  top: min(55svh, 470px);
+  top: calc(100% - 120px);
   left: 50%;
   width: 210px;
   height: 210px;
@@ -270,15 +263,15 @@ h1 {
 }
 
 .app:not([data-state="welcome"]) .mascot-zone {
-  top: 12px;
-  transform: translateX(-50%) scale(0.55);
+  top: 28px;
+  transform: translateX(-50%) scale(0.48);
 }
 
 .mascot {
   position: relative;
   width: 210px;
-  height: 210px;
-  border-radius: 16px 16px 48% 48%;
+  height: 200px;
+  border-radius: 50% 50% 48% 48% / 45% 45% 55% 55%;
   background: var(--color-primary);
   box-shadow: inset 0 -12px 0 var(--color-primary-dark), 0 10px 0 rgb(7 15 54 / 18%);
   transform-origin: center bottom;
@@ -287,37 +280,24 @@ h1 {
   transition-timing-function: var(--ease-out);
 }
 
-.mascot-sprout {
+.mascot-hair {
   position: absolute;
-  top: -14px;
+  z-index: 0;
+  top: -31px;
   left: 50%;
-  width: 36px;
-  height: 28px;
-  transform: translateX(-50%);
-}
-
-.mascot-sprout i {
-  position: absolute;
-  bottom: 0;
-  width: 22px;
-  height: 12px;
-  border-radius: 90% 12px 90% 12px;
-  background: var(--color-primary);
-}
-
-.mascot-sprout i:first-child {
-  left: 0;
-  transform: rotate(34deg);
-}
-
-.mascot-sprout i:last-child {
-  right: 0;
-  transform: scaleX(-1) rotate(34deg);
+  width: 42px;
+  height: 52px;
+  border-top: 13px solid var(--color-primary);
+  border-right: 13px solid var(--color-primary);
+  border-radius: 0 90% 18% 90%;
+  transform: translateX(-50%) rotate(14deg);
+  transform-origin: 50% 100%;
+  animation: hair-wave 5.4s 800ms var(--ease-out) infinite;
 }
 
 .mascot-brow {
   position: absolute;
-  top: 42px;
+  top: 37px;
   width: 30px;
   height: 8px;
   border-radius: 999px;
@@ -336,7 +316,7 @@ h1 {
 
 .mascot-eye {
   position: absolute;
-  top: 62px;
+  top: 56px;
   width: 76px;
   height: 82px;
   border-radius: 50%;
@@ -388,7 +368,7 @@ h1 {
 
 .mascot-nose {
   position: absolute;
-  top: 150px;
+  top: 143px;
   left: 50%;
   display: flex;
   gap: 6px;
@@ -404,7 +384,7 @@ h1 {
 
 .mascot-mouth {
   position: absolute;
-  bottom: 32px;
+  bottom: 18px;
   left: 50%;
   width: 32px;
   height: 12px;
@@ -433,10 +413,12 @@ h1 {
 }
 
 .app[data-state="question"] .mascot-mouth {
+  bottom: 17px;
   width: 18px;
-  height: 18px;
-  border: 5px solid var(--color-ink);
+  height: 13px;
+  border: 0;
   border-radius: 50%;
+  background: var(--color-ink);
 }
 
 .app[data-state="revealed"] .mascot {
@@ -444,6 +426,7 @@ h1 {
 }
 
 .app[data-state="revealed"] .mascot-mouth {
+  bottom: 9px;
   width: 58px;
   height: 34px;
   border: 0;
@@ -456,6 +439,7 @@ h1 {
 }
 
 .app[data-state="error"] .mascot-mouth {
+  bottom: 13px;
   width: 34px;
   height: 16px;
   border-top: 5px solid var(--color-ink);
@@ -466,15 +450,20 @@ h1 {
 .game-panel {
   position: relative;
   z-index: 4;
+  display: flex;
   width: 100%;
-  padding: 152px 0 28px;
+  height: 100%;
+  align-items: flex-start;
+  padding: 132px 0 10px;
   animation: game-panel-in 440ms 330ms var(--ease-out) both;
 }
 
 .status-region {
-  min-height: 340px;
+  width: 100%;
+  max-height: 100%;
   border-radius: var(--radius-surface);
-  padding: 28px 22px;
+  padding: clamp(18px, 4vw, 28px);
+  overflow: auto;
   background: var(--color-surface);
   box-shadow: 0 8px 0 rgb(7 15 54 / 20%);
 }
@@ -482,7 +471,7 @@ h1 {
 .loading-view,
 .error-view {
   display: grid;
-  min-height: 284px;
+  min-height: 238px;
   place-items: center;
   align-content: center;
   text-align: center;
@@ -516,9 +505,8 @@ h1 {
 }
 
 .joke-question {
-  min-height: 126px;
-  margin: 10px 0 24px;
-  font-size: clamp(1.55rem, 7vw, 2.2rem);
+  margin: 8px 0 14px;
+  font-size: clamp(1.4rem, 5.5vw, 2.05rem);
   line-height: 1.18;
   letter-spacing: -0.025em;
 }
@@ -529,9 +517,9 @@ h1 {
 }
 
 .joke-answer {
-  margin-bottom: 24px;
+  margin-bottom: 12px;
   border-radius: var(--radius-control);
-  padding: 18px;
+  padding: 12px 16px;
   background: var(--color-primary-soft);
   animation: answer-in 360ms var(--ease-out) both;
 }
@@ -544,7 +532,11 @@ h1 {
 
 .joke-actions {
   display: grid;
-  gap: 12px;
+  gap: 10px;
+}
+
+.game-panel .button {
+  min-height: 48px;
 }
 
 .error-view {
@@ -565,13 +557,13 @@ h1 {
 }
 
 .app-footer {
-  min-height: 60px;
+  min-height: 42px;
   color: var(--color-white);
   font-size: 0.72rem;
 }
 
 .app-footer a {
-  min-height: 44px;
+  min-height: 40px;
   display: inline-flex;
   align-items: center;
   color: var(--color-white);
@@ -584,6 +576,12 @@ h1 {
 @keyframes blink {
   0%, 44%, 48%, 100% { transform: scaleY(1); }
   46% { transform: scaleY(0.08); }
+}
+
+@keyframes hair-wave {
+  0%, 42%, 58%, 100% { transform: translateX(-50%) rotate(14deg); }
+  48% { transform: translateX(-50%) rotate(-6deg); }
+  53% { transform: translateX(-50%) rotate(22deg); }
 }
 
 @keyframes mascot-think {
@@ -632,15 +630,11 @@ h1 {
   }
 
   .welcome-panel {
-    padding-top: 64px;
-  }
-
-  .mascot-zone {
-    top: 470px;
+    padding-top: clamp(20px, 7svh, 52px);
   }
 
   .status-region {
-    padding: 38px;
+    padding: clamp(22px, 3vw, 30px);
   }
 
   .joke-actions {
