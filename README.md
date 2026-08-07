@@ -1,49 +1,33 @@
 # Chutzi
 
-Chutzi est une mini-expérience gamifiée qui récupère une blague en français depuis JokeAPI. La question apparaît d'abord, puis l'utilisateur révèle la chute avant de demander une autre blague ou de quitter.
+Chutzi est une mini-expérience gamifiée qui récupère des blagues françaises en deux parties depuis JokeAPI. La mascotte accompagne chaque étape avec des expressions, des sons et des réactions surprises.
 
-## Aperçu
+![Accueil de Chutzi sur ordinateur](assets/images/previews/readme-preview.png)
 
-### Accueil
+<p align="center">
+  <img src="assets/images/previews/readme-preview-mobile.png" alt="Accueil de Chutzi sur mobile" width="278" />
+</p>
 
-![Accueil de Chutzi](assets/images/previews/accueil.png)
+## Démo
 
-### Blague révélée
-
-![Question et réponse d'une blague](assets/images/previews/resultat.png)
-
-### Erreur réseau
-
-![Message affiché en cas d'erreur réseau](assets/images/previews/erreur.png)
-
-### Réglages audio
-
-![Sheet mobile des réglages audio](assets/images/previews/audio.png)
-
-### Animations surprises
-
-| Diablotin | Somnolence |
-| --- | --- |
-| ![Chutzi transformé en diablotin](assets/images/previews/diablotin.png) | ![Chutzi endormi avec des Z animés](assets/images/previews/somnolence.png) |
+- GitHub Pages : https://osiris-balonga.github.io/blague-aleatoire/
+- Repository : https://github.com/Osiris-Balonga/blague-aleatoire
 
 ## Fonctionnalités
 
-- Chargement de blagues françaises avec `fetch`, `async` et `await`
-- Sélection de blagues en deux parties : question et réponse
-- Filtrage complémentaire des contenus pour conserver une expérience tout public
-- États de chargement, résultat et erreur clairement identifiables
-- Mascotte animée qui change d'expression selon l'étape et réagit après une période d'inactivité
-- Transformation temporaire en diablotin et somnolence avec paupières fermées et « Z » cartoon
-- Bouche refermée automatiquement après les réactions vocales
-- Musique de fond atténuée automatiquement pendant les réactions sonores
-- Lecture musicale en boucle avec redémarrage de sécurité en fin de piste
-- Effets contextuels pour les clics, sauts, rires, erreurs et animations surprises
-- Réglages indépendants pour la musique et les effets, conservés dans `localStorage`
-- Modal audio sur ordinateur et bottom sheet sur mobile
-- Interface mobile-first utilisable au clavier
-- Réduction des animations selon `prefers-reduced-motion`
+- récupération asynchrone de blagues françaises avec `fetch` ;
+- parcours question, révélation de la chute, nouvelle blague ou retour à l'accueil ;
+- filtrage complémentaire pour conserver une expérience tout public ;
+- états de chargement et d'erreur dédiés ;
+- mascotte animée avec réactions contextuelles et animations d'inactivité ;
+- saut avec anticipation, squash and stretch et ombre ancrée sur la carte ;
+- réactions de réflexion, chant, sommeil, rire et transformation en diablotin ;
+- musique de fond en boucle et effets sonores contextuels ;
+- réglages séparés pour la musique et les effets, mémorisés avec `localStorage` ;
+- modal audio sur ordinateur et bottom sheet sur mobile ;
+- interface mobile-first, navigation clavier et prise en charge de `prefers-reduced-motion`.
 
-## Parcours
+## Parcours utilisateur
 
 1. Cliquer sur **Commencer**.
 2. Attendre le chargement de la blague.
@@ -51,40 +35,86 @@ Chutzi est une mini-expérience gamifiée qui récupère une blague en français
 4. Cliquer sur **Afficher la réponse**.
 5. Choisir **Une autre** ou **Quitter**.
 
-## Mode développeur
+## Technologies
 
-Le panneau de prévisualisation des réactions peut être ouvert de deux façons :
+- HTML5 sémantique ;
+- CSS3 et animations par keyframes ;
+- JavaScript natif avec modules ES ;
+- Fetch API et Web Audio via l'élément `Audio` ;
+- JokeAPI ;
+- Google Fonts avec la famille Nunito ;
+- Git et GitHub Pages.
 
-- ajouter `?dev=1` à l'URL ;
-- utiliser le raccourci <kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>D</kbd>.
+Aucun framework, aucune dépendance JavaScript et aucune étape de compilation ne sont nécessaires.
 
-Après le démarrage du jeu, neuf commandes permettent de déclencher immédiatement le regard, le saut, la réflexion, le bavardage, le sommeil, le chant, le diablotin, le rire et l'erreur.
+## Lancement local
 
-![Panneau du mode développeur](assets/images/previews/developer.png)
-
-## Lancer le projet
-
-Le projet utilise uniquement HTML, CSS et JavaScript. Un petit serveur local est recommandé pour les requêtes réseau :
+Les scripts utilisent les modules ES. Il faut donc servir le dossier avec un serveur statique plutôt que d'ouvrir directement `index.html` :
 
 ```bash
 python -m http.server 8000
 ```
 
-Ouvrir ensuite `http://localhost:8000` dans un navigateur.
+Ouvrir ensuite `http://127.0.0.1:8000/`.
 
-## Structure
+## Architecture
 
 ```text
 blague-aleatoire/
-├── index.html
 ├── assets/
 │   ├── audio/
-│   ├── css/style.css
-│   ├── images/previews/
-│   └── js/blague.js
+│   ├── css/
+│   │   ├── animations.css
+│   │   ├── audio.css
+│   │   ├── developer.css
+│   │   ├── foundation.css
+│   │   ├── game.css
+│   │   ├── layout.css
+│   │   ├── main.css
+│   │   ├── mascot.css
+│   │   └── responsive.css
+│   ├── images/
+│   │   ├── brand/
+│   │   ├── previews/
+│   │   └── reactions/
+│   └── js/
+│       ├── app.js
+│       ├── audio.js
+│       ├── config.js
+│       ├── developer.js
+│       ├── jokes.js
+│       └── mascot.js
+├── .nojekyll
+├── index.html
+├── robots.txt
+├── site.webmanifest
+├── sitemap.xml
 └── README.md
 ```
 
-## API utilisée
+`app.js` orchestre le parcours. Les requêtes et le filtrage vivent dans `jokes.js`, l'audio dans `audio.js`, les réactions dans `mascot.js` et les outils de prévisualisation dans `developer.js`. `main.css` importe les feuilles de styles dans l'ordre de cascade.
 
-Les données viennent de [JokeAPI](https://jokeapi.dev/), avec la langue française, le format en deux parties et le mode sécurisé activés.
+## Mode développeur
+
+Un panneau permet de déclencher manuellement les neuf réactions de Chutzi après le démarrage du jeu : regard, saut, réflexion, bavardage, sommeil, chant, diablotin, rire et erreur.
+
+Deux méthodes permettent de l'ouvrir :
+
+- ajouter `?dev=1` à l'URL, par exemple https://osiris-balonga.github.io/blague-aleatoire/?dev=1 ;
+- utiliser le raccourci <kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>D</kbd>.
+
+![Panneau de prévisualisation des réactions de Chutzi](assets/images/previews/developer.png)
+
+## API et confidentialité
+
+Les blagues proviennent de [JokeAPI](https://jokeapi.dev/) avec la langue française, le format en deux parties et le mode sécurisé activés. Seules les préférences audio sont conservées localement dans le navigateur ; l'application ne collecte aucune donnée personnelle.
+
+## Déploiement GitHub Pages
+
+Le projet est prêt pour une publication depuis la branche `main` et le dossier racine. Le fichier `.nojekyll` désactive le traitement Jekyll, tandis que `robots.txt`, `sitemap.xml`, le manifeste et les métadonnées de partage ciblent l'URL de production.
+
+Dans GitHub, sélectionner **Settings → Pages → Deploy from a branch**, puis choisir la branche `main` et le dossier `/ (root)`.
+
+## Auteur
+
+Projet réalisé par [Osiris Balonga](https://github.com/Osiris-Balonga) dans le cadre de l'Akieni Academy.
