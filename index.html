@@ -130,5 +130,59 @@
       </div>
     </div>
   </dialog>
+
+  <aside class="developer-panel" id="developer-panel" aria-labelledby="developer-title" hidden>
+    <header class="developer-header">
+      <div>
+        <p class="developer-kicker">Mode développeur</p>
+        <h2 id="developer-title">Réactions de Chutzi</h2>
+      </div>
+      <button class="developer-close" id="developer-close" type="button" aria-label="Fermer le mode développeur">×</button>
+    </header>
+
+    <p class="developer-hint" id="developer-hint">Démarre le jeu pour débloquer les réactions.</p>
+    <button class="button button-primary developer-start" id="developer-start" type="button">Démarrer le jeu</button>
+
+    <div class="developer-reactions" role="group" aria-label="Déclencher une réaction de Chutzi">
+      <button class="developer-reaction" type="button" data-reaction="look" aria-pressed="false">
+        <img src="assets/images/reactions/look.png" alt="" width="48" height="48">
+        <span>Regard</span>
+      </button>
+      <button class="developer-reaction" type="button" data-reaction="hop" aria-pressed="false">
+        <img src="assets/images/reactions/hop.png" alt="" width="48" height="48">
+        <span>Saut</span>
+      </button>
+      <button class="developer-reaction" type="button" data-reaction="think" aria-pressed="false">
+        <img src="assets/images/reactions/think.png" alt="" width="48" height="48">
+        <span>Réflexion</span>
+      </button>
+      <button class="developer-reaction" type="button" data-reaction="chat" aria-pressed="false">
+        <img src="assets/images/reactions/chat.png" alt="" width="48" height="48">
+        <span>Bavardage</span>
+      </button>
+      <button class="developer-reaction" type="button" data-reaction="sleep" aria-pressed="false">
+        <img src="assets/images/reactions/sleep.png" alt="" width="48" height="48">
+        <span>Sommeil</span>
+      </button>
+      <button class="developer-reaction" type="button" data-reaction="sing" aria-pressed="false">
+        <img src="assets/images/reactions/sing.png" alt="" width="48" height="48">
+        <span>Chant</span>
+      </button>
+      <button class="developer-reaction" type="button" data-reaction="devil" aria-pressed="false">
+        <img src="assets/images/reactions/devil.png" alt="" width="48" height="48">
+        <span>Diablotin</span>
+      </button>
+      <button class="developer-reaction" type="button" data-reaction="laugh" aria-pressed="false">
+        <img src="assets/images/reactions/laugh.png" alt="" width="48" height="48">
+        <span>Rire</span>
+      </button>
+      <button class="developer-reaction" type="button" data-reaction="error" aria-pressed="false">
+        <img src="assets/images/reactions/error.png" alt="" width="48" height="48">
+        <span>Erreur</span>
+      </button>
+    </div>
+
+    <p class="developer-shortcut"><kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>D</kbd></p>
+  </aside>
 </body>
 </html>

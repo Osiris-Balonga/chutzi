@@ -40,6 +40,11 @@ const audioDialog = document.querySelector("#audio-dialog");
 const audioCloseButton = document.querySelector("#audio-close-button");
 const musicToggle = document.querySelector("#music-toggle");
 const effectsToggle = document.querySelector("#effects-toggle");
+const developerPanel = document.querySelector("#developer-panel");
+const developerClose = document.querySelector("#developer-close");
+const developerHint = document.querySelector("#developer-hint");
+const developerStart = document.querySelector("#developer-start");
+const developerReactionButtons = [...document.querySelectorAll(".developer-reaction")];
 
 const backgroundMusic = new Audio("assets/audio/background-music.mp3");
 const sounds = {
@@ -88,6 +93,20 @@ const idleAnimations = [
   { name: "mischief", className: "is-idle-mischievous", duration: 2300, sound: sounds.mischievousLaugh, soundChance: 0.35 }
 ];
 const idleClassNames = [...new Set(idleAnimations.map((animation) => animation.className))];
+const developerReactions = {
+  look: { className: "is-idle-looking", duration: 1900 },
+  hop: { className: "is-idle-hopping", duration: 900, sound: sounds.jump },
+  think: { className: "is-idle-thinking", duration: 2400, sound: sounds.hmm },
+  chat: { className: "is-idle-chatting", duration: 1700, sound: sounds.talking },
+  sleep: { className: "is-idle-dozing", duration: 3200, sound: sounds.snoring },
+  sing: { className: "is-idle-singing", duration: 3900, sound: sounds.singing },
+  devil: { className: "is-idle-mischievous", duration: 2300, sound: sounds.mischievousLaugh },
+  laugh: { className: "is-reacting-laugh", duration: 1240, sound: sounds.laugh },
+  error: { className: "is-developer-error", duration: 1800, sound: sounds.fail }
+};
+const developerReactionClassNames = [
+  ...new Set(Object.values(developerReactions).map((reaction) => reaction.className))
+];
 
 let musicEnabled = readStoredPreference(MUSIC_STORAGE_KEY, !readLegacyMutedPreference());
 let effectsEnabled = readStoredPreference(EFFECTS_STORAGE_KEY, !readLegacyMutedPreference());
@@ -101,6 +120,9 @@ let dialogCloseTimer = null;
 let musicPausedByVisibility = false;
 let musicDuckTimer = null;
 let reactionTimer = null;
+let developerModeEnabled = false;
+let developerReactionTimer = null;
+let activeDeveloperSound = null;
 
 function normalizeText(text) {
   return text
@@ -279,6 +301,7 @@ function toggleEffects() {
 function openAudioDialog() {
   window.clearTimeout(dialogCloseTimer);
   cancelIdleAnimation(true);
+  stopDeveloperReaction(true);
   audioDialog.classList.remove("is-closing");
   audioDialog.showModal();
   audioCloseButton.focus();
@@ -293,12 +316,19 @@ function closeAudioDialog() {
   dialogCloseTimer = window.setTimeout(() => {
     audioDialog.close();
     audioDialog.classList.remove("is-closing");
-    audioMenuButton.focus();
-    scheduleIdleAnimation();
+
+    if (developerModeEnabled) {
+      developerClose.focus();
+    } else {
+      audioMenuButton.focus();
+      scheduleIdleAnimation();
+    }
   }, 160);
 }
 
 function showView(name) {
+  stopDeveloperReaction(true);
+
   if (name !== "revealed") {
     stopMascotReaction();
   }
@@ -310,6 +340,7 @@ function showView(name) {
   revealButton.hidden = name !== "question";
   jokeActions.hidden = name !== "revealed";
   app.dataset.state = name;
+  updateDeveloperControls();
 
   if (name === "question" || name === "revealed") {
     scheduleIdleAnimation();
@@ -390,6 +421,101 @@ function registerActivity() {
   scheduleIdleAnimation();
 }
 
+function developerReactionsAreAvailable() {
+  return app.dataset.state === "question" || app.dataset.state === "revealed";
+}
+
+function updateDeveloperControls() {
+  const reactionsAvailable = developerReactionsAreAvailable();
+
+  developerReactionButtons.forEach((button) => {
+    button.disabled = !reactionsAvailable;
+  });
+  developerStart.hidden = reactionsAvailable;
+
+  developerHint.textContent = reactionsAvailable
+    ? "Choisis une réaction : elle se joue immédiatement."
+    : "Démarre le jeu pour débloquer les réactions.";
+}
+
+function stopDeveloperReaction(stopReactionSound = false) {
+  window.clearTimeout(developerReactionTimer);
+  developerReactionClassNames.forEach((className) => mascot.classList.remove(className));
+  developerReactionButtons.forEach((button) => button.setAttribute("aria-pressed", "false"));
+
+  if (stopReactionSound && activeDeveloperSound) {
+    stopSound(activeDeveloperSound);
+    window.clearTimeout(musicDuckTimer);
+    backgroundMusic.volume = MUSIC_VOLUME;
+  }
+
+  activeDeveloperSound = null;
+}
+
+function triggerDeveloperReaction(name, button) {
+  const reaction = developerReactions[name];
+
+  if (!reaction || !developerReactionsAreAvailable()) {
+    return;
+  }
+
+  cancelIdleAnimation(true);
+  stopMascotReaction();
+  stopDeveloperReaction(true);
+  mascot.classList.add(reaction.className);
+  button.setAttribute("aria-pressed", "true");
+
+  if (reaction.sound) {
+    activeDeveloperSound = reaction.sound;
+    playEffect(reaction.sound, {
+      maxDuration: reaction.duration,
+      duckDuration: reaction.duration
+    });
+  }
+
+  developerReactionTimer = window.setTimeout(() => {
+    stopDeveloperReaction();
+    scheduleIdleAnimation();
+  }, reaction.duration);
+}
+
+function setDeveloperMode(enabled, focusPanel = false) {
+  developerModeEnabled = enabled;
+  developerPanel.hidden = !enabled;
+  app.classList.toggle("is-developer-mode", enabled);
+
+  if (enabled) {
+    cancelIdleAnimation(true);
+    updateDeveloperControls();
+
+    if (audioDialog.open) {
+      closeAudioDialog();
+    }
+
+    if (focusPanel) {
+      developerClose.focus();
+    }
+
+    return;
+  }
+
+  stopDeveloperReaction(true);
+  scheduleIdleAnimation();
+
+  if (focusPanel) {
+    audioMenuButton.focus();
+  }
+}
+
+function handleDeveloperShortcut(event) {
+  if (!event.altKey || !event.shiftKey || event.key.toLowerCase() !== "d") {
+    return;
+  }
+
+  event.preventDefault();
+  setDeveloperMode(!developerModeEnabled, true);
+}
+
 async function loadJoke(options = {}) {
   const { withTransitionSound = false } = options;
 
@@ -467,6 +593,7 @@ function loadAnotherJoke() {
 function quitGame() {
   cancelIdleAnimation(true);
   stopMascotReaction();
+  stopDeveloperReaction(true);
   pauseMusic(true);
   stopAllEffects();
   loadedJokeCount = 0;
@@ -474,6 +601,7 @@ function quitGame() {
   welcomePanel.hidden = false;
   app.classList.remove("is-entering");
   app.dataset.state = "welcome";
+  updateDeveloperControls();
   welcomePanel.classList.remove("is-returning");
   void welcomePanel.offsetWidth;
   welcomePanel.classList.add("is-returning");
@@ -499,6 +627,14 @@ audioCloseButton.addEventListener("click", closeAudioDialog);
 musicToggle.addEventListener("click", toggleMusic);
 effectsToggle.addEventListener("click", toggleEffects);
 
+developerReactionButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    triggerDeveloperReaction(button.dataset.reaction, button);
+  });
+});
+developerClose.addEventListener("click", () => setDeveloperMode(false, true));
+developerStart.addEventListener("click", startGame);
+
 audioDialog.addEventListener("cancel", (event) => {
   event.preventDefault();
   closeAudioDialog();
@@ -512,6 +648,7 @@ audioDialog.addEventListener("click", (event) => {
 
 document.addEventListener("pointerdown", registerActivity, { passive: true });
 document.addEventListener("keydown", registerActivity);
+document.addEventListener("keydown", handleDeveloperShortcut);
 
 document.addEventListener("visibilitychange", () => {
   if (document.hidden) {
@@ -539,4 +676,11 @@ backgroundMusic.addEventListener("ended", () => {
   playMusic();
 });
 
+const developerQueryValue = new URLSearchParams(window.location.search).get("dev");
+const developerModeFromQuery = ["1", "true", "chutzi"].includes(
+  (developerQueryValue || "").toLowerCase()
+);
+
 updateAudioControls();
+updateDeveloperControls();
+setDeveloperMode(developerModeFromQuery);
