@@ -10,8 +10,8 @@ Chutzi est une mini-expérience gamifiée qui récupère des blagues françaises
 
 ## Démo
 
-- GitHub Pages : https://osiris-balonga.github.io/blague-aleatoire/
-- Repository : https://github.com/Osiris-Balonga/blague-aleatoire
+- GitHub Pages : https://osiris-balonga.github.io/chutzi/
+- Repository : https://github.com/Osiris-Balonga/chutzi
 
 ## Fonctionnalités
 
@@ -60,7 +60,7 @@ Ouvrir ensuite `http://127.0.0.1:8000/`.
 ## Architecture
 
 ```text
-blague-aleatoire/
+chutzi/
 ├── assets/
 │   ├── audio/
 │   ├── css/
@@ -100,7 +100,7 @@ Un panneau permet de déclencher manuellement les neuf réactions de Chutzi apr�
 
 Deux méthodes permettent de l'ouvrir :
 
-- ajouter `?dev=1` à l'URL, par exemple https://osiris-balonga.github.io/blague-aleatoire/?dev=1 ;
+- ajouter `?dev=1` à l'URL, par exemple https://osiris-balonga.github.io/chutzi/?dev=1 ;
 - utiliser le raccourci <kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>D</kbd>.
 
 ![Panneau de prévisualisation des réactions de Chutzi](assets/images/previews/developer.png)
