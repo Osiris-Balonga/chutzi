@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Rigolo te raconte une blague aléatoire à révéler quand tu es prêt.">
+  <meta name="theme-color" content="#b2eb06">
+  <title>Rigolo - Une blague pour toi</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script src="assets/js/blague.js" defer></script>
+</head>
+<body>
+  <main class="app" id="app" data-state="welcome">
+    <header class="app-header">
+      <a class="brand" href="index.html" aria-label="Rigolo, retour à l'accueil">
+        <span class="brand-mark" aria-hidden="true">R</span>
+        <span>Rigolo</span>
+      </a>
+      <span class="api-status" aria-label="Blagues sécurisées">Mode tout public</span>
+    </header>
+
+    <div class="experience">
+      <section class="welcome-panel" id="welcome-panel" aria-labelledby="welcome-title">
+        <p class="welcome-intro">Besoin d'une petite pause ?</p>
+        <h1 id="welcome-title">Prêt à rire<br>un peu ?</h1>
+        <p class="welcome-copy">Rigolo a toujours une blague sous la main. À toi de découvrir la chute.</p>
+        <button class="button button-primary" id="start-button" type="button">Commencer</button>
+      </section>
+
+      <div class="mascot-zone" aria-hidden="true">
+        <div class="mascot" id="mascot">
+          <span class="mascot-sprout"><i></i><i></i></span>
+          <span class="mascot-brow mascot-brow-left"></span>
+          <span class="mascot-brow mascot-brow-right"></span>
+          <span class="mascot-eye mascot-eye-left">
+            <span class="mascot-pupil"><i></i></span>
+          </span>
+          <span class="mascot-eye mascot-eye-right">
+            <span class="mascot-pupil"><i></i></span>
+          </span>
+          <span class="mascot-nose"><i></i><i></i></span>
+          <span class="mascot-mouth"></span>
+        </div>
+      </div>
+
+      <section class="game-panel" id="game-panel" aria-labelledby="game-title" hidden>
+        <div class="status-region" id="status-region" aria-live="polite" aria-atomic="true">
+          <div class="loading-view" id="loading-view" hidden>
+            <span class="spinner" aria-hidden="true"></span>
+            <h2 id="game-title">Je cherche la bonne...</h2>
+            <p>Rigolo fouille dans sa réserve de blagues.</p>
+          </div>
+
+          <article class="joke-view" id="joke-view" hidden>
+            <p class="joke-label">Ta blague</p>
+            <h2 class="joke-question" id="joke-question"></h2>
+            <div class="joke-answer" id="joke-answer" hidden>
+              <span>La réponse</span>
+              <p id="joke-delivery"></p>
+            </div>
+            <button class="button button-primary" id="reveal-button" type="button">Afficher la réponse</button>
+            <div class="joke-actions" id="joke-actions" hidden>
+              <button class="button button-primary" id="another-button" type="button">Une autre</button>
+              <button class="button button-secondary" id="quit-button" type="button">Quitter</button>
+            </div>
+          </article>
+
+          <div class="error-view" id="error-view" role="alert" hidden>
+            <span class="error-face" aria-hidden="true">:(</span>
+            <h2>Oups, la blague s'est cachée.</h2>
+            <p>Vérifie ta connexion puis réessaie.</p>
+            <div class="joke-actions">
+              <button class="button button-primary" id="retry-button" type="button">Réessayer</button>
+              <button class="button button-secondary" id="error-quit-button" type="button">Quitter</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <footer class="app-footer">
+      <span>Des blagues surprises, sans inscription.</span>
+      <a href="https://jokeapi.dev/" target="_blank" rel="noreferrer">Propulsé par JokeAPI</a>
+    </footer>
+  </main>
+</body>
+</html>
