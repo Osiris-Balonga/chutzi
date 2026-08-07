@@ -51,6 +51,17 @@ Chutzi est une mini-expérience gamifiée qui récupère une blague en français
 4. Cliquer sur **Afficher la réponse**.
 5. Choisir **Une autre** ou **Quitter**.
 
+## Mode développeur
+
+Le panneau de prévisualisation des réactions peut être ouvert de deux façons :
+
+- ajouter `?dev=1` à l'URL ;
+- utiliser le raccourci <kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>D</kbd>.
+
+Après le démarrage du jeu, neuf commandes permettent de déclencher immédiatement le regard, le saut, la réflexion, le bavardage, le sommeil, le chant, le diablotin, le rire et l'erreur.
+
+![Panneau du mode développeur](assets/images/previews/developer.png)
+
 ## Lancer le projet
 
 Le projet utilise uniquement HTML, CSS et JavaScript. Un petit serveur local est recommandé pour les requêtes réseau :
