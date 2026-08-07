@@ -1,12 +1,12 @@
-# Rigolo
+# Chutzi
 
-Rigolo est une mini-expérience gamifiée qui récupère une blague en français depuis JokeAPI. La question apparaît d'abord, puis l'utilisateur révèle la chute avant de demander une autre blague ou de quitter.
+Chutzi est une mini-expérience gamifiée qui récupère une blague en français depuis JokeAPI. La question apparaît d'abord, puis l'utilisateur révèle la chute avant de demander une autre blague ou de quitter.
 
 ## Aperçu
 
 ### Accueil
 
-![Accueil de Rigolo](assets/images/previews/accueil.png)
+![Accueil de Chutzi](assets/images/previews/accueil.png)
 
 ### Blague révélée
 
