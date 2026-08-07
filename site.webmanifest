@@ -1,0 +1,23 @@
+{
+  "name": "Chutzi - Une blague pour toi",
+  "short_name": "Chutzi",
+  "description": "Des blagues françaises accompagnées par une mascotte animée.",
+  "lang": "fr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#899dfe",
+  "theme_color": "#b2eb06",
+  "icons": [
+    {
+      "src": "assets/images/brand/chutzi-icon.png",
+      "sizes": "64x64",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/images/brand/chutzi-logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
