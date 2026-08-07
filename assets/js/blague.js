@@ -17,6 +17,12 @@ const TERMES_EXCLUS = [
   "viol"
 ];
 
+const MUSIC_STORAGE_KEY = "chutzi-music-enabled";
+const EFFECTS_STORAGE_KEY = "chutzi-effects-enabled";
+const LEGACY_AUDIO_STORAGE_KEY = "chutzi-audio-muted";
+const MUSIC_VOLUME = 0.14;
+const DUCKED_MUSIC_VOLUME = 0.065;
+
 const app = document.querySelector("#app");
 const welcomePanel = document.querySelector("#welcome-panel");
 const gamePanel = document.querySelector("#game-panel");
@@ -28,41 +34,95 @@ const jokeAnswer = document.querySelector("#joke-answer");
 const jokeDelivery = document.querySelector("#joke-delivery");
 const revealButton = document.querySelector("#reveal-button");
 const jokeActions = document.querySelector("#joke-actions");
-const audioToggle = document.querySelector("#audio-toggle");
-const clickSound = new Audio("assets/audio/click.wav");
-const laughSound = new Audio("assets/audio/people-laughing.mp3");
-const AUDIO_STORAGE_KEY = "chutzi-audio-muted";
+const mascot = document.querySelector("#mascot");
+const audioMenuButton = document.querySelector("#audio-menu-button");
+const audioDialog = document.querySelector("#audio-dialog");
+const audioCloseButton = document.querySelector("#audio-close-button");
+const musicToggle = document.querySelector("#music-toggle");
+const effectsToggle = document.querySelector("#effects-toggle");
 
-clickSound.preload = "auto";
-clickSound.volume = 0.34;
-laughSound.preload = "auto";
-laughSound.volume = 0.48;
+const backgroundMusic = new Audio("assets/audio/background-music.mp3");
+const sounds = {
+  click: new Audio("assets/audio/click.wav"),
+  laugh: new Audio("assets/audio/people-laughing.mp3"),
+  mischievousLaugh: new Audio("assets/audio/mischievous-laugh.mp3"),
+  jump: new Audio("assets/audio/jump.mp3"),
+  joking: new Audio("assets/audio/joking.mp3"),
+  whoosh: new Audio("assets/audio/whoosh.mp3"),
+  hmm: new Audio("assets/audio/hmm.mp3"),
+  snoring: new Audio("assets/audio/snoring.mp3"),
+  fail: new Audio("assets/audio/fail.mp3"),
+  talking: new Audio("assets/audio/talking.mp3"),
+  singing: new Audio("assets/audio/singing.mp3")
+};
 
-let audioMuted = lirePreferenceAudio();
-let dernierIdentifiant = null;
+backgroundMusic.preload = "metadata";
+backgroundMusic.loop = true;
+backgroundMusic.volume = MUSIC_VOLUME;
 
-function normaliserTexte(texte) {
-  return texte
+Object.values(sounds).forEach((sound) => {
+  sound.preload = "auto";
+});
+
+sounds.click.volume = 0.3;
+sounds.laugh.volume = 0.42;
+sounds.mischievousLaugh.volume = 0.34;
+sounds.jump.volume = 0.4;
+sounds.joking.volume = 0.32;
+sounds.whoosh.volume = 0.28;
+sounds.hmm.volume = 0.28;
+sounds.snoring.volume = 0.26;
+sounds.fail.volume = 0.28;
+sounds.talking.volume = 0.27;
+sounds.singing.volume = 0.24;
+
+const soundStopTimers = new WeakMap();
+const idleAnimations = [
+  { name: "look", className: "is-idle-looking", duration: 1900 },
+  { name: "look", className: "is-idle-looking", duration: 1900 },
+  { name: "hop", className: "is-idle-hopping", duration: 900, sound: sounds.jump, soundChance: 0.45 },
+  { name: "hmm", className: "is-idle-thinking", duration: 2400, sound: sounds.hmm, soundChance: 0.7 },
+  { name: "chat", className: "is-idle-chatting", duration: 1700, sound: sounds.talking, soundChance: 0.55 },
+  { name: "doze", className: "is-idle-dozing", duration: 3200, sound: sounds.snoring, soundChance: 0.55 },
+  { name: "sing", className: "is-idle-singing", duration: 3900, sound: sounds.singing, soundChance: 0.35 },
+  { name: "mischief", className: "is-idle-mischievous", duration: 2300, sound: sounds.mischievousLaugh, soundChance: 0.35 }
+];
+const idleClassNames = [...new Set(idleAnimations.map((animation) => animation.className))];
+
+let musicEnabled = readStoredPreference(MUSIC_STORAGE_KEY, !readLegacyMutedPreference());
+let effectsEnabled = readStoredPreference(EFFECTS_STORAGE_KEY, !readLegacyMutedPreference());
+let lastJokeId = null;
+let loadedJokeCount = 0;
+let idleTimer = null;
+let idleEndTimer = null;
+let activeIdleSound = null;
+let lastIdleAnimationName = null;
+let dialogCloseTimer = null;
+let musicPausedByVisibility = false;
+let musicDuckTimer = null;
+
+function normalizeText(text) {
+  return text
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase();
 }
 
-function estToutPublic(blague) {
-  const texte = normaliserTexte(`${blague.setup} ${blague.delivery}`);
-  const signalee = Object.values(blague.flags || {}).some(Boolean);
+function isFamilyFriendly(joke) {
+  const text = normalizeText(`${joke.setup} ${joke.delivery}`);
+  const hasFlag = Object.values(joke.flags || {}).some(Boolean);
 
-  return blague.type === "twopart"
-    && blague.safe !== false
-    && !signalee
-    && !TERMES_EXCLUS.some((terme) => texte.includes(terme));
+  return joke.type === "twopart"
+    && joke.safe !== false
+    && !hasFlag
+    && !TERMES_EXCLUS.some((term) => text.includes(term));
 }
 
-function choisirBlague(donnees) {
-  const liste = Array.isArray(donnees.jokes) ? donnees.jokes : [donnees];
-  const candidates = liste.filter(estToutPublic);
-  const nouvelles = candidates.filter((blague) => blague.id !== dernierIdentifiant);
-  const selection = nouvelles.length > 0 ? nouvelles : candidates;
+function chooseJoke(data) {
+  const list = Array.isArray(data.jokes) ? data.jokes : [data];
+  const candidates = list.filter(isFamilyFriendly);
+  const newCandidates = candidates.filter((joke) => joke.id !== lastJokeId);
+  const selection = newCandidates.length > 0 ? newCandidates : candidates;
 
   if (selection.length === 0) {
     throw new Error("Aucune blague tout public disponible");
@@ -71,110 +131,331 @@ function choisirBlague(donnees) {
   return selection[Math.floor(Math.random() * selection.length)];
 }
 
-function lirePreferenceAudio() {
+function readLegacyMutedPreference() {
   try {
-    return localStorage.getItem(AUDIO_STORAGE_KEY) === "true";
-  } catch (_erreur) {
+    return localStorage.getItem(LEGACY_AUDIO_STORAGE_KEY) === "true";
+  } catch (_error) {
     return false;
   }
 }
 
-function jouerSon(son) {
-  if (audioMuted) {
+function readStoredPreference(key, fallback) {
+  try {
+    const value = localStorage.getItem(key);
+    return value === null ? fallback : value === "true";
+  } catch (_error) {
+    return fallback;
+  }
+}
+
+function storePreference(key, value) {
+  try {
+    localStorage.setItem(key, String(value));
+  } catch (_error) {
+    // La préférence reste active pour la session si le stockage est indisponible.
+  }
+}
+
+function stopSound(sound, reset = true) {
+  window.clearTimeout(soundStopTimers.get(sound));
+  soundStopTimers.delete(sound);
+  sound.pause();
+
+  if (reset) {
+    sound.currentTime = 0;
+  }
+}
+
+function stopAllEffects() {
+  Object.values(sounds).forEach((sound) => stopSound(sound));
+  window.clearTimeout(musicDuckTimer);
+  backgroundMusic.volume = MUSIC_VOLUME;
+}
+
+function duckMusic(duration) {
+  if (backgroundMusic.paused) {
     return;
   }
 
-  son.currentTime = 0;
-  void son.play().catch(() => {});
+  window.clearTimeout(musicDuckTimer);
+  backgroundMusic.volume = DUCKED_MUSIC_VOLUME;
+  musicDuckTimer = window.setTimeout(() => {
+    backgroundMusic.volume = MUSIC_VOLUME;
+  }, duration);
 }
 
-function mettreAJourBoutonAudio() {
-  audioToggle.classList.toggle("is-muted", audioMuted);
-  audioToggle.setAttribute("aria-pressed", String(audioMuted));
-  audioToggle.setAttribute("aria-label", audioMuted ? "Activer les sons" : "Couper les sons");
+function playEffect(sound, options = {}) {
+  if (!effectsEnabled || document.hidden) {
+    return false;
+  }
+
+  const { maxDuration = 0, duckDuration = 0 } = options;
+  stopSound(sound);
+  void sound.play().catch(() => {});
+
+  if (duckDuration > 0) {
+    duckMusic(duckDuration);
+  }
+
+  if (maxDuration > 0) {
+    soundStopTimers.set(sound, window.setTimeout(() => stopSound(sound), maxDuration));
+  }
+
+  return true;
 }
 
-function basculerAudio() {
-  if (!audioMuted) {
-    jouerSon(clickSound);
+function shouldPlayMusic() {
+  return musicEnabled && app.dataset.state !== "welcome" && !document.hidden;
+}
+
+function playMusic() {
+  if (!shouldPlayMusic()) {
+    return;
   }
 
-  audioMuted = !audioMuted;
+  void backgroundMusic.play().catch(() => {});
+}
 
-  try {
-    localStorage.setItem(AUDIO_STORAGE_KEY, String(audioMuted));
-  } catch (_erreur) {
-    // La préférence reste active pour la session si le stockage est indisponible.
+function pauseMusic(reset = false) {
+  backgroundMusic.pause();
+  window.clearTimeout(musicDuckTimer);
+  backgroundMusic.volume = MUSIC_VOLUME;
+
+  if (reset) {
+    backgroundMusic.currentTime = 0;
   }
+}
 
-  if (audioMuted) {
-    laughSound.pause();
+function updateAudioControls() {
+  const allDisabled = !musicEnabled && !effectsEnabled;
+  const partiallyEnabled = musicEnabled !== effectsEnabled;
+  const musicState = musicEnabled ? "activée" : "coupée";
+  const effectsState = effectsEnabled ? "activés" : "coupés";
+
+  musicToggle.setAttribute("aria-checked", String(musicEnabled));
+  effectsToggle.setAttribute("aria-checked", String(effectsEnabled));
+  audioMenuButton.classList.toggle("is-silent", allDisabled);
+  audioMenuButton.classList.toggle("has-partial-audio", partiallyEnabled);
+  audioMenuButton.setAttribute(
+    "aria-label",
+    `Ouvrir les réglages audio, musique ${musicState}, effets ${effectsState}`
+  );
+}
+
+function toggleMusic() {
+  playEffect(sounds.click);
+  musicEnabled = !musicEnabled;
+  storePreference(MUSIC_STORAGE_KEY, musicEnabled);
+
+  if (musicEnabled) {
+    playMusic();
   } else {
-    jouerSon(clickSound);
+    pauseMusic();
   }
 
-  mettreAJourBoutonAudio();
+  updateAudioControls();
 }
 
-function afficherVue(nom) {
-  loadingView.hidden = nom !== "loading";
-  jokeView.hidden = nom !== "question" && nom !== "revealed";
-  errorView.hidden = nom !== "error";
-  jokeAnswer.hidden = nom !== "revealed";
-  revealButton.hidden = nom !== "question";
-  jokeActions.hidden = nom !== "revealed";
-  app.dataset.state = nom;
+function toggleEffects() {
+  if (effectsEnabled) {
+    playEffect(sounds.click);
+    effectsEnabled = false;
+    stopAllEffects();
+  } else {
+    effectsEnabled = true;
+    playEffect(sounds.click);
+  }
+
+  storePreference(EFFECTS_STORAGE_KEY, effectsEnabled);
+  updateAudioControls();
 }
 
-async function chargerBlague() {
-  laughSound.pause();
-  laughSound.currentTime = 0;
-  afficherVue("loading");
+function openAudioDialog() {
+  window.clearTimeout(dialogCloseTimer);
+  cancelIdleAnimation(true);
+  audioDialog.classList.remove("is-closing");
+  audioDialog.showModal();
+  audioCloseButton.focus();
+}
+
+function closeAudioDialog() {
+  if (!audioDialog.open || audioDialog.classList.contains("is-closing")) {
+    return;
+  }
+
+  audioDialog.classList.add("is-closing");
+  dialogCloseTimer = window.setTimeout(() => {
+    audioDialog.close();
+    audioDialog.classList.remove("is-closing");
+    audioMenuButton.focus();
+    scheduleIdleAnimation();
+  }, 160);
+}
+
+function showView(name) {
+  loadingView.hidden = name !== "loading";
+  jokeView.hidden = name !== "question" && name !== "revealed";
+  errorView.hidden = name !== "error";
+  jokeAnswer.hidden = name !== "revealed";
+  revealButton.hidden = name !== "question";
+  jokeActions.hidden = name !== "revealed";
+  app.dataset.state = name;
+
+  if (name === "question" || name === "revealed") {
+    scheduleIdleAnimation();
+  } else {
+    cancelIdleAnimation(true);
+  }
+}
+
+function canRunIdleAnimation() {
+  return !document.hidden
+    && !audioDialog.open
+    && (app.dataset.state === "question" || app.dataset.state === "revealed");
+}
+
+function randomIdleDelay() {
+  return 7500 + Math.floor(Math.random() * 6500);
+}
+
+function scheduleIdleAnimation(delay = randomIdleDelay()) {
+  window.clearTimeout(idleTimer);
+
+  if (!canRunIdleAnimation()) {
+    return;
+  }
+
+  idleTimer = window.setTimeout(runIdleAnimation, delay);
+}
+
+function cancelIdleAnimation(stopIdleSound = false) {
+  window.clearTimeout(idleTimer);
+  window.clearTimeout(idleEndTimer);
+  idleClassNames.forEach((className) => mascot.classList.remove(className));
+
+  if (stopIdleSound && activeIdleSound) {
+    stopSound(activeIdleSound);
+    window.clearTimeout(musicDuckTimer);
+    backgroundMusic.volume = MUSIC_VOLUME;
+  }
+
+  activeIdleSound = null;
+}
+
+function runIdleAnimation() {
+  if (!canRunIdleAnimation()) {
+    return;
+  }
+
+  const availableAnimations = idleAnimations.filter(
+    (animation) => animation.name !== lastIdleAnimationName
+  );
+  const animation = availableAnimations[Math.floor(Math.random() * availableAnimations.length)];
+
+  cancelIdleAnimation(true);
+  lastIdleAnimationName = animation.name;
+  mascot.classList.add(animation.className);
+
+  if (animation.sound && Math.random() <= animation.soundChance) {
+    activeIdleSound = animation.sound;
+    playEffect(animation.sound, {
+      maxDuration: animation.duration,
+      duckDuration: animation.duration
+    });
+  }
+
+  idleEndTimer = window.setTimeout(() => {
+    mascot.classList.remove(animation.className);
+    activeIdleSound = null;
+    scheduleIdleAnimation();
+  }, animation.duration);
+}
+
+function registerActivity() {
+  if (!canRunIdleAnimation()) {
+    return;
+  }
+
+  cancelIdleAnimation(true);
+  scheduleIdleAnimation();
+}
+
+async function loadJoke(options = {}) {
+  const { withTransitionSound = false } = options;
+
+  cancelIdleAnimation(true);
+  stopSound(sounds.laugh);
+  stopSound(sounds.mischievousLaugh);
+
+  if (withTransitionSound) {
+    playEffect(sounds.whoosh, { maxDuration: 900 });
+  }
+
+  showView("loading");
 
   try {
-    const reponse = await fetch(API_URL);
+    const response = await fetch(API_URL);
 
-    if (!reponse.ok) {
-      throw new Error(`Erreur HTTP ${reponse.status}`);
+    if (!response.ok) {
+      throw new Error(`Erreur HTTP ${response.status}`);
     }
 
-    const donnees = await reponse.json();
+    const data = await response.json();
 
-    if (donnees.error) {
-      throw new Error(donnees.message || "Réponse inattendue de l'API");
+    if (data.error) {
+      throw new Error(data.message || "Réponse inattendue de l'API");
     }
 
-    const blague = choisirBlague(donnees);
-    dernierIdentifiant = blague.id;
+    const joke = chooseJoke(data);
+    lastJokeId = joke.id;
+    loadedJokeCount += 1;
 
-    jokeQuestion.textContent = blague.setup;
-    jokeDelivery.textContent = blague.delivery;
-    afficherVue("question");
+    jokeQuestion.textContent = joke.setup;
+    jokeDelivery.textContent = joke.delivery;
+    showView("question");
+
+    if (loadedJokeCount > 1 && Math.random() < 0.55) {
+      playEffect(sounds.joking, { maxDuration: 1200, duckDuration: 1100 });
+    }
+
     revealButton.focus();
-  } catch (erreur) {
-    console.error("Impossible de charger la blague :", erreur);
-    afficherVue("error");
+  } catch (error) {
+    console.error("Impossible de charger la blague :", error);
+    showView("error");
+    playEffect(sounds.fail, { maxDuration: 2600, duckDuration: 2600 });
     document.querySelector("#retry-button").focus();
   }
 }
 
-function commencer() {
+function startGame() {
+  cancelIdleAnimation(true);
   app.classList.add("is-entering");
   welcomePanel.hidden = true;
   gamePanel.hidden = false;
+  void loadJoke();
+  playMusic();
+  playEffect(sounds.jump, { maxDuration: 1200, duckDuration: 1000 });
   window.setTimeout(() => app.classList.remove("is-entering"), 820);
-  void chargerBlague();
 }
 
-function revelerReponse() {
-  afficherVue("revealed");
-  jouerSon(laughSound);
+function revealAnswer() {
+  cancelIdleAnimation(true);
+  showView("revealed");
+
+  const laugh = Math.random() < 0.24 ? sounds.mischievousLaugh : sounds.laugh;
+  playEffect(laugh, { maxDuration: 4200, duckDuration: 3800 });
   document.querySelector("#another-button").focus();
 }
 
-function quitter() {
-  laughSound.pause();
-  laughSound.currentTime = 0;
+function loadAnotherJoke() {
+  void loadJoke({ withTransitionSound: true });
+}
+
+function quitGame() {
+  cancelIdleAnimation(true);
+  pauseMusic(true);
+  stopAllEffects();
+  loadedJokeCount = 0;
   gamePanel.hidden = true;
   welcomePanel.hidden = false;
   app.classList.remove("is-entering");
@@ -186,14 +467,53 @@ function quitter() {
 }
 
 document.querySelectorAll(".button").forEach((button) => {
-  button.addEventListener("click", () => jouerSon(clickSound));
+  button.addEventListener("click", () => playEffect(sounds.click));
 });
 
-document.querySelector("#start-button").addEventListener("click", commencer);
-revealButton.addEventListener("click", revelerReponse);
-document.querySelector("#another-button").addEventListener("click", chargerBlague);
-document.querySelector("#retry-button").addEventListener("click", chargerBlague);
-document.querySelector("#quit-button").addEventListener("click", quitter);
-document.querySelector("#error-quit-button").addEventListener("click", quitter);
-audioToggle.addEventListener("click", basculerAudio);
-mettreAJourBoutonAudio();
+document.querySelector("#start-button").addEventListener("click", startGame);
+revealButton.addEventListener("click", revealAnswer);
+document.querySelector("#another-button").addEventListener("click", loadAnotherJoke);
+document.querySelector("#retry-button").addEventListener("click", loadAnotherJoke);
+document.querySelector("#quit-button").addEventListener("click", quitGame);
+document.querySelector("#error-quit-button").addEventListener("click", quitGame);
+
+audioMenuButton.addEventListener("click", () => {
+  playEffect(sounds.click);
+  openAudioDialog();
+});
+audioCloseButton.addEventListener("click", closeAudioDialog);
+musicToggle.addEventListener("click", toggleMusic);
+effectsToggle.addEventListener("click", toggleEffects);
+
+audioDialog.addEventListener("cancel", (event) => {
+  event.preventDefault();
+  closeAudioDialog();
+});
+
+audioDialog.addEventListener("click", (event) => {
+  if (event.target === audioDialog) {
+    closeAudioDialog();
+  }
+});
+
+document.addEventListener("pointerdown", registerActivity, { passive: true });
+document.addEventListener("keydown", registerActivity);
+
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) {
+    musicPausedByVisibility = !backgroundMusic.paused;
+    pauseMusic();
+    stopAllEffects();
+    cancelIdleAnimation(true);
+    return;
+  }
+
+  if (musicPausedByVisibility) {
+    playMusic();
+  }
+
+  musicPausedByVisibility = false;
+  scheduleIdleAnimation();
+});
+
+updateAudioControls();

@@ -21,9 +21,10 @@
         <span>Chutzi</span>
       </a>
       <div class="header-tools">
-        <button class="audio-toggle" id="audio-toggle" type="button" aria-label="Couper les sons" aria-pressed="false">
-          <span class="sound-on" aria-hidden="true">♪</span>
+        <button class="audio-toggle" id="audio-menu-button" type="button" aria-label="Ouvrir les réglages audio" aria-haspopup="dialog" aria-controls="audio-dialog">
+          <span class="sound-on" aria-hidden="true">♫</span>
           <span class="sound-off" aria-hidden="true">×</span>
+          <span class="audio-status-dot" aria-hidden="true"></span>
         </button>
       </div>
     </header>
@@ -92,5 +93,39 @@
       <a href="https://jokeapi.dev/" target="_blank" rel="noreferrer">JokeAPI</a>
     </footer>
   </main>
+
+  <dialog class="audio-dialog" id="audio-dialog" aria-labelledby="audio-dialog-title">
+    <div class="audio-sheet">
+      <header class="audio-sheet-header">
+        <div>
+          <p class="audio-sheet-kicker">Le mix de Chutzi</p>
+          <h2 id="audio-dialog-title">Réglages audio</h2>
+        </div>
+        <button class="audio-close" id="audio-close-button" type="button" aria-label="Fermer les réglages audio">×</button>
+      </header>
+
+      <p class="audio-sheet-copy">Choisis ce que tu veux entendre. La musique et les effets restent indépendants.</p>
+
+      <div class="audio-settings">
+        <button class="audio-setting" id="music-toggle" type="button" role="switch" aria-checked="true">
+          <span class="audio-setting-icon" aria-hidden="true">♫</span>
+          <span class="audio-setting-copy">
+            <strong>Musique</strong>
+            <small>L'ambiance qui accompagne le jeu</small>
+          </span>
+          <span class="switch-visual" aria-hidden="true"><i></i></span>
+        </button>
+
+        <button class="audio-setting" id="effects-toggle" type="button" role="switch" aria-checked="true">
+          <span class="audio-setting-icon" aria-hidden="true">✦</span>
+          <span class="audio-setting-copy">
+            <strong>Effets sonores</strong>
+            <small>Clics, sauts et réactions de Chutzi</small>
+          </span>
+          <span class="switch-visual" aria-hidden="true"><i></i></span>
+        </button>
+      </div>
+    </div>
+  </dialog>
 </body>
 </html>
