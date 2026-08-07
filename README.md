@@ -20,6 +20,12 @@ Chutzi est une mini-expérience gamifiée qui récupère une blague en français
 
 ![Sheet mobile des réglages audio](assets/images/previews/audio.png)
 
+### Animations surprises
+
+| Diablotin | Somnolence |
+| --- | --- |
+| ![Chutzi transformé en diablotin](assets/images/previews/diablotin.png) | ![Chutzi endormi avec des Z animés](assets/images/previews/somnolence.png) |
+
 ## Fonctionnalités
 
 - Chargement de blagues françaises avec `fetch`, `async` et `await`
@@ -27,7 +33,10 @@ Chutzi est une mini-expérience gamifiée qui récupère une blague en français
 - Filtrage complémentaire des contenus pour conserver une expérience tout public
 - États de chargement, résultat et erreur clairement identifiables
 - Mascotte animée qui change d'expression selon l'étape et réagit après une période d'inactivité
+- Transformation temporaire en diablotin et somnolence avec paupières fermées et « Z » cartoon
+- Bouche refermée automatiquement après les réactions vocales
 - Musique de fond atténuée automatiquement pendant les réactions sonores
+- Lecture musicale en boucle avec redémarrage de sécurité en fin de piste
 - Effets contextuels pour les clics, sauts, rires, erreurs et animations surprises
 - Réglages indépendants pour la musique et les effets, conservés dans `localStorage`
 - Modal audio sur ordinateur et bottom sheet sur mobile
