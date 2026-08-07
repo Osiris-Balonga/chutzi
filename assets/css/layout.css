@@ -1,0 +1,96 @@
+.experience {
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.welcome-panel {
+  position: relative;
+  z-index: 3;
+  padding-top: clamp(20px, 6svh, 58px);
+  text-align: center;
+}
+
+.welcome-panel.is-returning {
+  animation: welcome-return 380ms 180ms var(--ease-out) both;
+}
+
+.welcome-intro {
+  margin-bottom: 10px;
+  color: var(--color-primary-soft);
+  font-size: 0.95rem;
+}
+
+h1 {
+  margin-bottom: 14px;
+  color: var(--color-white);
+  font-size: clamp(2.9rem, 12vw, 4.6rem);
+  line-height: 0.94;
+  letter-spacing: -0.04em;
+  font-weight: 900;
+}
+
+.welcome-copy {
+  max-width: 34ch;
+  margin: 0 auto 18px;
+  color: #f5f6ff;
+  line-height: 1.4;
+}
+
+.button {
+  min-height: 54px;
+  border: 0;
+  border-radius: var(--radius-control);
+  padding: 0 24px;
+  cursor: pointer;
+  font-weight: 900;
+  transition-property: transform, background-color, box-shadow;
+  transition-duration: 160ms;
+  transition-timing-function: var(--ease-out);
+}
+
+.button:active:not(:disabled) {
+  transform: translateY(4px) scale(0.96);
+  box-shadow: 0 1px 0;
+}
+
+.button-primary {
+  background: var(--color-primary);
+  color: var(--color-ink);
+  box-shadow: var(--shadow-control) var(--color-primary-dark);
+}
+
+.button-primary:hover {
+  background: var(--color-primary-hover);
+}
+
+.button-secondary {
+  background: var(--color-white);
+  color: var(--color-ink);
+  box-shadow: var(--shadow-control) #cbd0e8;
+}
+
+.app-footer {
+  position: absolute;
+  right: 20px;
+  bottom: 0;
+  left: 20px;
+  min-height: 42px;
+  color: var(--color-white);
+  font-size: 0.72rem;
+  opacity: 1;
+  transition: opacity 180ms ease-out;
+}
+
+.app[data-state="welcome"] .app-footer {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.app-footer a {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  color: var(--color-white);
+}
+

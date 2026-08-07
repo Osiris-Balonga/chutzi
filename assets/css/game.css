@@ -1,0 +1,109 @@
+.game-panel {
+  position: relative;
+  z-index: 4;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: flex-start;
+  padding: 132px 0 10px;
+  animation: game-panel-in 400ms 620ms var(--ease-out) both;
+}
+
+.status-region {
+  width: 100%;
+  max-height: 100%;
+  border-radius: var(--radius-surface);
+  padding: clamp(18px, 4vw, 28px);
+  overflow: auto;
+  background: var(--color-surface);
+  box-shadow: 0 8px 0 rgb(7 15 54 / 20%);
+}
+
+.loading-view,
+.error-view {
+  display: grid;
+  min-height: 238px;
+  place-items: center;
+  align-content: center;
+  text-align: center;
+}
+
+.loading-view h2,
+.error-view h2 {
+  margin: 18px 0 8px;
+  font-size: 1.55rem;
+}
+
+.loading-view p,
+.error-view p {
+  color: var(--color-ink-muted);
+}
+
+.spinner {
+  width: 52px;
+  height: 52px;
+  border: 7px solid var(--color-primary-soft);
+  border-top-color: var(--color-primary-dark);
+  border-radius: 50%;
+  animation: spin 700ms linear infinite;
+}
+
+.joke-label,
+.joke-answer span {
+  color: #587500;
+  font-size: 0.82rem;
+  font-weight: 900;
+}
+
+.joke-question {
+  margin: 8px 0 14px;
+  font-size: clamp(1.4rem, 5.5vw, 2.05rem);
+  line-height: 1.18;
+  letter-spacing: -0.025em;
+}
+
+.joke-view > .button,
+.joke-actions .button {
+  width: 100%;
+}
+
+.joke-answer {
+  margin-bottom: 12px;
+  border-radius: var(--radius-control);
+  padding: 12px 16px;
+  background: var(--color-primary-soft);
+  animation: answer-in 360ms var(--ease-out) both;
+}
+
+.joke-answer p {
+  margin: 5px 0 0;
+  font-size: 1.18rem;
+  line-height: 1.45;
+}
+
+.joke-actions {
+  display: grid;
+  gap: 10px;
+}
+
+.game-panel .button {
+  min-height: 48px;
+}
+
+.error-view {
+  border-radius: var(--radius-control);
+  background: var(--color-danger-soft);
+}
+
+.error-face {
+  display: grid;
+  width: 58px;
+  height: 58px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--color-danger);
+  color: var(--color-white);
+  font-size: 1.4rem;
+  font-weight: 900;
+}
+

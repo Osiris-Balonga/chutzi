@@ -1,0 +1,549 @@
+.mascot-zone {
+  position: absolute;
+  z-index: 2;
+  top: 28px;
+  left: 50%;
+  width: 210px;
+  height: 210px;
+  transform: translateX(-50%) translateY(calc(100svh - 212px));
+  transform-origin: center top;
+  transition: transform 420ms var(--ease-out);
+  will-change: transform;
+}
+
+.app:not([data-state="welcome"]) .mascot-zone {
+  z-index: 5;
+  transform: translateX(-50%) translateY(8px) scale(0.48);
+}
+
+.app.is-entering .mascot-zone {
+  animation: mascot-jump-to-stage 900ms var(--ease-out) both;
+}
+
+.mascot {
+  z-index: 1;
+  position: relative;
+  width: 210px;
+  height: 210px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  box-shadow: inset 0 -12px 0 var(--color-primary-dark);
+  transform-origin: center bottom;
+  transition-property: transform, box-shadow, background-color;
+  transition-duration: 260ms;
+  transition-timing-function: var(--ease-out);
+}
+
+.mascot-stage-shadow {
+  position: absolute;
+  z-index: 0;
+  bottom: -8px;
+  left: 50%;
+  width: 142px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgb(7 15 54 / 22%);
+  filter: blur(1px);
+  opacity: 0;
+  transform: translateX(-50%) scaleX(0.86);
+  transform-origin: center;
+}
+
+.app:not([data-state="welcome"]) .mascot-stage-shadow {
+  opacity: 1;
+}
+
+.app.is-entering .mascot-stage-shadow {
+  animation: mascot-ground-shadow 900ms var(--ease-out) both;
+}
+
+.mascot.is-idle-hopping + .mascot-stage-shadow {
+  animation: mascot-ground-shadow 1120ms var(--ease-out) both;
+}
+
+.mascot-hair {
+  position: absolute;
+  z-index: 0;
+  top: -42px;
+  left: 50%;
+  width: 52px;
+  height: 60px;
+  background: var(--color-primary);
+  clip-path: path("M 28 58 C 27 46 22 39 12 34 C 4 30 2 22 6 15 C 10 9 18 8 24 12 C 37 20 46 33 45 45 C 44 54 37 60 28 58 Z");
+  transform: translateX(-50%) rotate(-8deg);
+  transform-origin: 50% 100%;
+  animation: hair-wave 5.4s 800ms var(--ease-out) infinite;
+  transition-property: opacity, scale, filter, background-color;
+  transition-duration: 220ms;
+  transition-timing-function: var(--ease-out);
+}
+
+.mascot-horn {
+  position: absolute;
+  z-index: 0;
+  top: -40px;
+  width: 54px;
+  height: 68px;
+  opacity: 0;
+  scale: 0.25;
+  border-radius: 50% 50% 35% 35%;
+  background: #ff5c70;
+  clip-path: path("M 5 64 C 2 43 8 19 29 4 C 24 27 35 43 48 59 C 38 67 18 70 5 64 Z");
+  filter: blur(4px);
+  transform-origin: 50% 100%;
+  transition-property: opacity, scale, filter;
+  transition-duration: 240ms;
+  transition-timing-function: var(--ease-out);
+}
+
+.mascot-horn-left {
+  left: 30px;
+  transform: rotate(-14deg);
+}
+
+.mascot-horn-right {
+  right: 30px;
+  transform: scaleX(-1) rotate(-14deg);
+}
+
+.mascot-brow {
+  position: absolute;
+  top: 37px;
+  width: 30px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--color-ink);
+}
+
+.mascot-brow-left {
+  left: 45px;
+  transform: rotate(-10deg);
+}
+
+.mascot-brow-right {
+  right: 45px;
+  transform: rotate(10deg);
+}
+
+.mascot-eye {
+  position: absolute;
+  top: 56px;
+  width: 76px;
+  height: 82px;
+  border-radius: 50%;
+  background: var(--color-white);
+  transform-origin: center;
+  animation: blink 5.4s 1.2s infinite;
+  transition-property: background-color;
+  transition-duration: 180ms;
+  transition-timing-function: var(--ease-out);
+}
+
+.mascot-eye::after {
+  content: "";
+  position: absolute;
+  top: 26px;
+  left: 14px;
+  width: 48px;
+  height: 20px;
+  opacity: 0;
+  border-bottom: 7px solid var(--color-ink);
+  border-radius: 50%;
+  scale: 0.25;
+  filter: blur(4px);
+  transition-property: opacity, scale, filter;
+  transition-duration: 180ms;
+  transition-timing-function: var(--ease-out);
+}
+
+.mascot-eye-left {
+  left: 25px;
+}
+
+.mascot-eye-right {
+  right: 25px;
+}
+
+.mascot-pupil {
+  position: absolute;
+  top: 18px;
+  left: 20px;
+  width: 38px;
+  height: 46px;
+  border-radius: 50%;
+  background: var(--color-ink);
+  transition-property: opacity;
+  transition-duration: 150ms;
+  transition-timing-function: var(--ease-out);
+}
+
+.mascot-pupil::before,
+.mascot-pupil i {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  background: var(--color-white);
+}
+
+.mascot-pupil::before {
+  top: 6px;
+  left: 8px;
+  width: 12px;
+  height: 15px;
+}
+
+.mascot-pupil i {
+  right: 7px;
+  bottom: 8px;
+  width: 6px;
+  height: 7px;
+  opacity: 0.72;
+}
+
+.mascot-nose {
+  position: absolute;
+  top: 143px;
+  left: 50%;
+  display: flex;
+  gap: 6px;
+  transform: translateX(-50%);
+}
+
+.mascot-nose i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--color-ink);
+}
+
+.mascot-mouth {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  width: 32px;
+  height: 12px;
+  border-bottom: 5px solid var(--color-ink);
+  border-radius: 50%;
+  transform: translateX(-50%);
+  transition-property: background-color, transform;
+  transition-duration: 220ms;
+  transition-timing-function: var(--ease-out);
+}
+
+.mascot-sleep-symbols {
+  position: absolute;
+  z-index: 4;
+  top: -18px;
+  right: -92px;
+  width: 106px;
+  height: 122px;
+  pointer-events: none;
+}
+
+.mascot-music-symbols {
+  position: absolute;
+  z-index: 4;
+  top: -26px;
+  right: -90px;
+  width: 112px;
+  height: 126px;
+  pointer-events: none;
+}
+
+.mascot-music-symbols i {
+  position: absolute;
+  opacity: 0;
+  color: var(--color-white);
+  font-style: normal;
+  font-weight: 900;
+  line-height: 1;
+  text-shadow: 0 3px 0 rgb(7 15 54 / 30%);
+}
+
+.mascot-music-symbols i:nth-child(1) {
+  bottom: 4px;
+  left: 0;
+  font-size: 1.8rem;
+}
+
+.mascot-music-symbols i:nth-child(2) {
+  bottom: 39px;
+  left: 28px;
+  font-size: 2.35rem;
+}
+
+.mascot-music-symbols i:nth-child(3) {
+  bottom: 78px;
+  left: 62px;
+  font-size: 2.7rem;
+}
+
+.mascot-idea {
+  position: absolute;
+  z-index: 4;
+  top: -46px;
+  right: -72px;
+  opacity: 0;
+  font-size: 4.8rem;
+  line-height: 1;
+  filter: blur(4px) drop-shadow(0 4px 0 rgb(7 15 54 / 25%));
+  scale: 0.25;
+  rotate: 12deg;
+  transform-origin: 30% 90%;
+}
+
+.mascot-sleep-symbols i {
+  position: absolute;
+  opacity: 0;
+  color: var(--color-white);
+  font-style: normal;
+  font-weight: 900;
+  line-height: 1;
+  text-shadow: 0 3px 0 rgb(7 15 54 / 30%);
+}
+
+.mascot-sleep-symbols i:nth-child(1) {
+  bottom: 4px;
+  left: 0;
+  font-size: 1.65rem;
+}
+
+.mascot-sleep-symbols i:nth-child(2) {
+  bottom: 35px;
+  left: 24px;
+  font-size: 2.05rem;
+}
+
+.mascot-sleep-symbols i:nth-child(3) {
+  bottom: 72px;
+  left: 54px;
+  font-size: 2.55rem;
+}
+
+.app[data-state="loading"] .mascot {
+  animation: mascot-think 1.8s var(--ease-out) infinite;
+}
+
+.app.is-entering[data-state="loading"] .mascot {
+  animation: mascot-takeoff-shape 900ms var(--ease-out) both;
+}
+
+.app[data-state="loading"] .mascot-brow-left {
+  transform: rotate(10deg) translateY(4px);
+}
+
+.app[data-state="loading"] .mascot-brow-right {
+  transform: rotate(-10deg) translateY(4px);
+}
+
+.app[data-state="question"] .mascot {
+  transform: rotate(-3deg);
+}
+
+.mascot.is-reacting-laugh {
+  animation: mascot-laugh 560ms var(--ease-out) 2;
+}
+
+.app .mascot.is-reacting-laugh .mascot-mouth {
+  bottom: 9px;
+  width: 58px;
+  height: 34px;
+  border: 0;
+  border-radius: 4px 4px 999px 999px;
+  background: var(--color-ink);
+}
+
+.app[data-state="error"] .mascot {
+  transform: translateY(5px) rotate(4deg);
+}
+
+.app[data-state="error"] .mascot-mouth {
+  bottom: 13px;
+  width: 34px;
+  height: 16px;
+  border-top: 5px solid var(--color-ink);
+  border-bottom: 0;
+  border-radius: 50%;
+}
+
+.app .mascot.is-developer-error {
+  background: #ef3f4f;
+  box-shadow: inset 0 -12px 0 #bd2635;
+  animation: mascot-developer-error 760ms var(--ease-out) both;
+}
+
+.app .mascot.is-developer-error .mascot-hair {
+  background: #ef3f4f;
+}
+
+.app .mascot.is-developer-error .mascot-brow-left {
+  transform: translateY(5px) rotate(14deg);
+}
+
+.app .mascot.is-developer-error .mascot-brow-right {
+  transform: translateY(5px) rotate(-14deg);
+}
+
+.app .mascot.is-developer-error .mascot-mouth {
+  bottom: 13px;
+  width: 34px;
+  height: 16px;
+  border: 0;
+  border-top: 5px solid var(--color-ink);
+  border-radius: 50%;
+  background: transparent;
+}
+
+.mascot.is-idle-looking .mascot-pupil {
+  animation: pupil-wander 1.9s var(--ease-out) both;
+}
+
+.mascot.is-idle-hopping {
+  animation: mascot-idle-hop 1120ms var(--ease-out) both;
+}
+
+.app .mascot.is-idle-hopping .mascot-mouth {
+  bottom: 10px;
+  width: 24px;
+  height: 24px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--color-ink);
+  animation: mascot-mouth-hop 1120ms var(--ease-out) both;
+}
+
+.mascot.is-idle-thinking {
+  animation: mascot-idle-think 2.4s var(--ease-out) both;
+}
+
+.mascot.is-idle-thinking .mascot-brow-left {
+  transform: translateY(3px) rotate(8deg);
+}
+
+.mascot.is-idle-thinking .mascot-brow-right {
+  transform: translateY(-3px) rotate(16deg);
+}
+
+.mascot.is-idle-thinking .mascot-idea {
+  animation: mascot-idea-pop 2.4s var(--ease-out) both;
+}
+
+.mascot.is-idle-chatting {
+  animation: mascot-idle-chat 1.7s var(--ease-out) both;
+}
+
+.app .mascot.is-idle-chatting .mascot-mouth {
+  bottom: 12px;
+  width: 28px;
+  height: 22px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--color-ink);
+  animation: mascot-mouth-chat 340ms ease-in-out 5;
+}
+
+.mascot.is-idle-dozing {
+  animation: mascot-idle-doze 3.2s var(--ease-out) both;
+}
+
+.mascot.is-idle-dozing .mascot-eye {
+  background: transparent;
+  animation: none;
+}
+
+.mascot.is-idle-dozing .mascot-eye::after {
+  opacity: 1;
+  scale: 1;
+  filter: blur(0);
+}
+
+.mascot.is-idle-dozing .mascot-pupil {
+  opacity: 0;
+}
+
+.mascot.is-idle-dozing .mascot-sleep-symbols i {
+  animation: mascot-sleep-z 1.5s var(--ease-out) both;
+}
+
+.mascot.is-idle-dozing .mascot-sleep-symbols i:nth-child(1) {
+  animation-delay: 160ms;
+}
+
+.mascot.is-idle-dozing .mascot-sleep-symbols i:nth-child(2) {
+  animation-delay: 720ms;
+}
+
+.mascot.is-idle-dozing .mascot-sleep-symbols i:nth-child(3) {
+  animation-delay: 1.28s;
+}
+
+.mascot.is-idle-singing {
+  animation: mascot-idle-sing 650ms ease-in-out 6 alternate;
+}
+
+.mascot.is-idle-singing .mascot-music-symbols i {
+  animation: mascot-music-note 1.55s var(--ease-out) both;
+}
+
+.mascot.is-idle-singing .mascot-music-symbols i:nth-child(1) {
+  animation-delay: 120ms;
+}
+
+.mascot.is-idle-singing .mascot-music-symbols i:nth-child(2) {
+  animation-delay: 840ms;
+}
+
+.mascot.is-idle-singing .mascot-music-symbols i:nth-child(3) {
+  animation-delay: 1.58s;
+}
+
+.app .mascot.is-idle-singing .mascot-mouth {
+  bottom: 11px;
+  width: 40px;
+  height: 24px;
+  border: 0;
+  border-radius: 45% 45% 999px 999px;
+  background: var(--color-ink);
+  animation: mascot-mouth-sing 650ms ease-in-out 6 alternate;
+}
+
+.mascot.is-idle-mischievous {
+  background: #9147d7;
+  box-shadow: inset 0 -12px 0 #6726a4, 0 10px 0 rgb(7 15 54 / 18%);
+  animation: mascot-idle-mischief 2.3s var(--ease-out) both;
+}
+
+.mascot.is-idle-mischievous .mascot-hair {
+  opacity: 0;
+  scale: 0.25;
+  filter: blur(4px);
+}
+
+.mascot.is-idle-mischievous .mascot-horn {
+  opacity: 1;
+  scale: 1;
+  filter: blur(0);
+}
+
+.mascot.is-idle-mischievous .mascot-brow-left {
+  transform: translateY(5px) rotate(13deg);
+}
+
+.mascot.is-idle-mischievous .mascot-brow-right {
+  transform: translateY(-5px) rotate(-18deg);
+}
+
+.mascot.is-idle-mischievous .mascot-pupil {
+  animation: pupil-mischief 2.3s var(--ease-out) both;
+}
+
+.app .mascot.is-idle-mischievous .mascot-mouth {
+  bottom: 16px;
+  width: 42px;
+  height: 15px;
+  border: 0;
+  border-bottom: 5px solid var(--color-ink);
+  border-radius: 50%;
+  background: transparent;
+}
+

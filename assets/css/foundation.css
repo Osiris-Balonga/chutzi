@@ -1,0 +1,123 @@
+:root {
+  --color-primary: #b2eb06;
+  --color-primary-hover: #c3f42b;
+  --color-primary-dark: #8fbd02;
+  --color-primary-soft: #efffc2;
+  --color-secondary: #899dfe;
+  --color-secondary-soft: #e7ebff;
+  --color-ink: #070f36;
+  --color-ink-muted: #4f5674;
+  --color-surface: #fffbe7;
+  --color-white: #ffffff;
+  --color-danger: #c83f4d;
+  --color-danger-soft: #ffeaed;
+  --radius-control: 12px;
+  --radius-surface: 16px;
+  --shadow-control: 0 5px 0;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  min-width: 320px;
+  background: var(--color-ink);
+  font-family: "Nunito", system-ui, sans-serif;
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100svh;
+  margin: 0;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 28%, #a9b5ff 0, var(--color-secondary) 32%, #4f5c9e 72%, var(--color-ink) 125%);
+  font-weight: 700;
+}
+
+button,
+a {
+  font: inherit;
+}
+
+button:focus-visible,
+a:focus-visible {
+  outline: 4px solid var(--color-white);
+  outline-offset: 4px;
+}
+
+h1,
+h2,
+p {
+  margin-top: 0;
+}
+
+h1,
+h2 {
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+.app {
+  position: relative;
+  display: grid;
+  grid-template-rows: 64px minmax(0, 1fr);
+  width: min(100%, 820px);
+  height: 100svh;
+  min-height: 480px;
+  margin-inline: auto;
+  padding: 0 20px;
+  overflow: hidden;
+}
+
+.app-header,
+.app-footer {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.app-header {
+  min-height: 64px;
+}
+
+.header-tools {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--color-white);
+  font-size: 1.1rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  text-decoration: none;
+}
+
+.brand-logo {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  filter: drop-shadow(0 3px 0 rgb(7 15 54 / 18%));
+}
+
