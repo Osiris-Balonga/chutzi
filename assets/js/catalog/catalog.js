@@ -5,10 +5,13 @@ const TONE_RANK = {
     playful: 1,
     mischievous: 2
 };
-export function getEligibleJokes(locale, tone) {
-    return JOKE_CATALOG.filter((joke) => isVettedJoke(joke)
+export function filterEligibleJokes(catalog, locale, tone) {
+    return catalog.filter((joke) => isVettedJoke(joke)
         && joke.locale === locale
         && TONE_RANK[joke.tone] <= TONE_RANK[tone]);
+}
+export function getEligibleJokes(locale, tone) {
+    return filterEligibleJokes(JOKE_CATALOG, locale, tone);
 }
 export function getSafeFallback(locale) {
     const fallback = JOKE_CATALOG.find((joke) => isVettedJoke(joke)

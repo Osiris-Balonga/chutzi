@@ -1,14 +1,35 @@
-import { getEligibleJokes, getSafeFallback } from "./catalog/catalog.js";
+import { createJokeSelector } from "./selection/selector.js";
 
-function chooseJoke(jokes) {
-  return jokes[Math.floor(Math.random() * jokes.length)];
-}
+const browserStorage = {
+  getItem(key) {
+    try {
+      return window.localStorage.getItem(key);
+    } catch {
+      return null;
+    }
+  },
+  setItem(key, value) {
+    try {
+      window.localStorage.setItem(key, value);
+    } catch {
+      // The selector remains available for the current session.
+    }
+  },
+  removeItem(key) {
+    try {
+      window.localStorage.removeItem(key);
+    } catch {
+      // There is no persisted selector state to remove.
+    }
+  }
+};
 
-export async function fetchJoke(locale, tone) {
-  const candidates = getEligibleJokes(locale, tone);
-  return chooseJoke(candidates.length > 0 ? candidates : [getSafeFallback(locale)]);
+const selector = createJokeSelector({ store: browserStorage });
+
+export async function fetchJoke(locale, tone, tagWeights) {
+  return selector.next({ locale, tone, tagWeights });
 }
 
 export function resetJokeHistory() {
-  // Selection history is added by the adaptive-selection feature.
+  selector.clearQueue();
 }
