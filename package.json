@@ -1,0 +1,15 @@
+{
+  "name": "chutzi",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc --project tsconfig.json",
+    "check": "tsc --noEmit --project tsconfig.json",
+    "test": "npm run build && node --test",
+    "verify": "npm run check && npm test"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  }
+}
