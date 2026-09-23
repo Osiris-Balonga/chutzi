@@ -1,61 +1,61 @@
 # Chutzi
 
-Chutzi est une mini-expérience gamifiée qui récupère des blagues françaises en deux parties depuis JokeAPI. La mascotte accompagne chaque étape avec des expressions, des sons et des réactions surprises.
+Chutzi is a small playful experience that retrieves two-part French jokes from JokeAPI. The mascot accompanies every moment with expressive animations, sounds and surprise reactions.
 
-![Accueil de Chutzi sur ordinateur](assets/images/previews/readme-preview.png)
+![Chutzi home screen on desktop](assets/images/previews/readme-preview.png)
 
 <p align="center">
-  <img src="assets/images/previews/readme-preview-mobile.png" alt="Accueil de Chutzi sur mobile" width="278" />
+  <img src="assets/images/previews/readme-preview-mobile.png" alt="Chutzi home screen on mobile" width="278" />
 </p>
 
-## Démo
+## Demo
 
-- GitHub Pages : https://osiris-balonga.github.io/chutzi/
-- Repository : https://github.com/Osiris-Balonga/chutzi
+- GitHub Pages: https://osiris-balonga.github.io/chutzi/
+- Repository: https://github.com/Osiris-Balonga/chutzi
 
-## Fonctionnalités
+## Features
 
-- récupération asynchrone de blagues françaises avec `fetch` ;
-- parcours question, révélation de la chute, nouvelle blague ou retour à l'accueil ;
-- filtrage complémentaire pour conserver une expérience tout public ;
-- états de chargement et d'erreur dédiés ;
-- mascotte animée avec réactions contextuelles et animations d'inactivité ;
-- saut avec anticipation, squash and stretch et ombre ancrée sur la carte ;
-- réactions de réflexion, chant, sommeil, rire et transformation en diablotin ;
-- musique de fond en boucle et effets sonores contextuels ;
-- réglages séparés pour la musique et les effets, mémorisés avec `localStorage` ;
-- modal audio sur ordinateur et bottom sheet sur mobile ;
-- interface mobile-first, navigation clavier et prise en charge de `prefers-reduced-motion`.
+- asynchronously retrieves French jokes with `fetch`;
+- guides the player from setup to punchline, then to another joke or the home screen;
+- applies an additional filter to keep the experience family friendly;
+- includes dedicated loading and error states;
+- brings an animated mascot to life with contextual reactions and idle animations;
+- uses anticipation, squash-and-stretch and a grounded shadow for jumps;
+- includes thinking, singing, sleeping, laughing and devil transformations;
+- plays looping background music and contextual sound effects;
+- stores independent music and effects preferences with `localStorage`;
+- uses an audio modal on desktop and a bottom sheet on mobile;
+- is mobile-first, keyboard navigable and respects `prefers-reduced-motion`.
 
-## Parcours utilisateur
+## User flow
 
-1. Cliquer sur **Commencer**.
-2. Attendre le chargement de la blague.
-3. Lire la question.
-4. Cliquer sur **Afficher la réponse**.
-5. Choisir **Une autre** ou **Quitter**.
+1. Select **Start**.
+2. Wait for a joke to load.
+3. Read the setup.
+4. Select **Show the answer**.
+5. Choose **Another** or **Quit**.
 
-## Technologies
+## Technology
 
-- HTML5 sémantique ;
-- CSS3 et animations par keyframes ;
-- JavaScript natif avec modules ES ;
-- Fetch API et Web Audio via l'élément `Audio` ;
-- JokeAPI ;
-- Google Fonts avec la famille Nunito ;
-- Git et GitHub Pages.
+- semantic HTML5;
+- CSS3 and keyframe animations;
+- native JavaScript with ES modules;
+- Fetch API and Web Audio through the `Audio` element;
+- JokeAPI;
+- Google Fonts with the Nunito family;
+- Git and GitHub Pages.
 
-Aucun framework, aucune dépendance JavaScript et aucune étape de compilation ne sont nécessaires.
+No framework, JavaScript dependency or build step is currently required.
 
-## Lancement local
+## Run locally
 
-Les scripts utilisent les modules ES. Il faut donc servir le dossier avec un serveur statique plutôt que d'ouvrir directement `index.html` :
+The scripts use ES modules, so serve the directory with a static server instead of opening `index.html` directly:
 
 ```bash
 python -m http.server 8000
 ```
 
-Ouvrir ensuite `http://127.0.0.1:8000/`.
+Then open `http://127.0.0.1:8000/`.
 
 ## Architecture
 
@@ -92,29 +92,29 @@ chutzi/
 └── README.md
 ```
 
-`app.js` orchestre le parcours. Les requêtes et le filtrage vivent dans `jokes.js`, l'audio dans `audio.js`, les réactions dans `mascot.js` et les outils de prévisualisation dans `developer.js`. `main.css` importe les feuilles de styles dans l'ordre de cascade.
+`app.js` orchestrates the flow. Requests and filtering live in `jokes.js`, audio in `audio.js`, mascot reactions in `mascot.js`, and preview tools in `developer.js`. `main.css` imports the stylesheets in cascade order.
 
-## Mode développeur
+## Developer mode
 
-Un panneau permet de déclencher manuellement les neuf réactions de Chutzi après le démarrage du jeu : regard, saut, réflexion, bavardage, sommeil, chant, diablotin, rire et erreur.
+After a game starts, a panel can trigger Chutzi's nine reactions manually: look, hop, think, chat, sleep, sing, devil, laugh and error.
 
-Deux méthodes permettent de l'ouvrir :
+Open it in either of these ways:
 
-- ajouter `?dev=1` à l'URL, par exemple https://osiris-balonga.github.io/chutzi/?dev=1 ;
-- utiliser le raccourci <kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>D</kbd>.
+- append `?dev=1` to the URL, for example https://osiris-balonga.github.io/chutzi/?dev=1;
+- use the <kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>D</kbd> shortcut.
 
-![Panneau de prévisualisation des réactions de Chutzi](assets/images/previews/developer.png)
+![Chutzi reaction preview panel](assets/images/previews/developer.png)
 
-## API et confidentialité
+## API and privacy
 
-Les blagues proviennent de [JokeAPI](https://jokeapi.dev/) avec la langue française, le format en deux parties et le mode sécurisé activés. Seules les préférences audio sont conservées localement dans le navigateur ; l'application ne collecte aucune donnée personnelle.
+Jokes come from [JokeAPI](https://jokeapi.dev/) with French selected, the two-part format and safe mode enabled. Only audio preferences are stored locally in the browser; the application does not collect personal data.
 
-## Déploiement GitHub Pages
+## GitHub Pages deployment
 
-Le projet est prêt pour une publication depuis la branche `main` et le dossier racine. Le fichier `.nojekyll` désactive le traitement Jekyll, tandis que `robots.txt`, `sitemap.xml`, le manifeste et les métadonnées de partage ciblent l'URL de production.
+The project is ready to publish from the `main` branch and repository root. `.nojekyll` disables Jekyll processing, while `robots.txt`, `sitemap.xml`, the manifest and social metadata target the production URL.
 
-Dans GitHub, sélectionner **Settings → Pages → Deploy from a branch**, puis choisir la branche `main` et le dossier `/ (root)`.
+In GitHub, select **Settings → Pages → Deploy from a branch**, then choose the `main` branch and `/ (root)` folder.
 
-## Auteur
+## Author
 
-Projet réalisé par [Osiris Balonga](https://github.com/Osiris-Balonga) dans le cadre de l'Akieni Academy.
+Created by [Osiris Balonga](https://github.com/Osiris-Balonga) as part of Akieni Academy.

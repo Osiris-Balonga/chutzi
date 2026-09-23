@@ -26,7 +26,7 @@ function chooseJoke(data) {
   const selection = unseenCandidates.length > 0 ? unseenCandidates : candidates;
 
   if (selection.length === 0) {
-    throw new Error("Aucune blague tout public disponible");
+    throw new Error("No family-friendly joke is available");
   }
 
   return selection[Math.floor(Math.random() * selection.length)];
@@ -42,7 +42,7 @@ export async function fetchJoke() {
   const data = await response.json();
 
   if (data.error) {
-    throw new Error(data.message || "Réponse inattendue de l'API");
+    throw new Error(data.message || "Unexpected API response");
   }
 
   const joke = chooseJoke(data);

@@ -16,7 +16,7 @@ function storePreference(key, value) {
   try {
     localStorage.setItem(key, String(value));
   } catch (_error) {
-    // La préférence reste active pour la session si le stockage est indisponible.
+    // Keep the preference for the current session when storage is unavailable.
   }
 }
 
