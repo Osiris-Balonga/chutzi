@@ -5,6 +5,7 @@ import { createMascotController } from "./mascot.js";
 import { createPreferencesStore, resolveBrowserLocale } from "./core/preferences.js";
 import { getFeedbackPrompt, translate } from "./core/i18n.js";
 import { createProfileStore, getDominantTag, getTagWeights } from "./profile/profile.js";
+import { JOKE_TAGS } from "./core/types.js";
 
 const elements = {
   app: document.querySelector("#app"),
@@ -22,6 +23,14 @@ const elements = {
   feedbackPrompt: document.querySelector("#feedback-prompt"),
   feedbackButtons: [...document.querySelectorAll("[data-feedback-rating]")],
   feedbackSkipButton: document.querySelector("#feedback-skip-button"),
+  profileButton: document.querySelector("#profile-button"),
+  profilePanel: document.querySelector("#profile-panel"),
+  profileBackButton: document.querySelector("#profile-back-button"),
+  profileCopy: document.querySelector("#profile-copy"),
+  profileDonut: document.querySelector("#profile-donut"),
+  profileMascotImage: document.querySelector("#profile-mascot-image"),
+  profileLegend: document.querySelector("#profile-legend"),
+  profileResetButton: document.querySelector("#profile-reset-button"),
   mascot: document.querySelector("#mascot"),
   audioMenuButton: document.querySelector("#audio-menu-button"),
   audioDialog: document.querySelector("#audio-dialog"),
@@ -92,6 +101,8 @@ let musicPausedByVisibility = false;
 let jokeRequestId = 0;
 let promptIndex = 0;
 let currentJoke = null;
+let profileReturnView = "welcome";
+let profileMascotIndex = 0;
 let developer;
 
 function applyTranslations() {
@@ -110,6 +121,9 @@ function applyTranslations() {
 
   audio.updateControls();
   developer?.sync();
+  if (elements.app.dataset.state === "profile") {
+    renderProfile();
+  }
 }
 
 function syncPreferenceControls() {
@@ -172,12 +186,66 @@ function showView(name) {
   elements.revealButton.hidden = name !== "question";
   elements.jokeActions.hidden = name !== "revealed";
   elements.feedbackPanel.hidden = true;
+  elements.profilePanel.hidden = true;
   elements.app.dataset.state = name;
   developer.sync();
 
   if (name === "question" || name === "revealed") {
     mascot.scheduleIdle();
   }
+}
+
+function renderProfile() {
+  const weights = getTagWeights(profile);
+  const segments = JOKE_TAGS.map((tag) => Math.max(1, 1 + weights[tag]));
+  const colors = ["#b2eb06", "#899dfe", "#ffd36e", "#f7a7d6", "#ff8b93"];
+  const total = segments.reduce((sum, value) => sum + value, 0);
+  let cursor = 0;
+  const gradient = segments.map((segment, index) => {
+    const start = cursor;
+    cursor += segment / total * 100;
+    return `${colors[index]} ${start}% ${cursor}%`;
+  }).join(", ");
+  const dominant = getDominantTag(profile);
+  const mascotImages = dominant === "gentle-spooky"
+    ? ["devil.png", "laugh.png"]
+    : dominant ? ["laugh.png", "chat.png"] : ["look.png", "think.png"];
+
+  elements.profileDonut.style.background = `conic-gradient(${gradient})`;
+  elements.profileMascotImage.src = `assets/images/reactions/${mascotImages[profileMascotIndex % mascotImages.length]}`;
+  elements.profileCopy.textContent = profile.feedback.length === 0
+    ? t("profile.empty")
+    : profile.feedback.length < 4 ? t("profile.early") : t("profile.established");
+  elements.profileLegend.replaceChildren(...JOKE_TAGS.map((tag) => {
+    const item = document.createElement("li");
+    item.textContent = t(`tag.${tag}`);
+    return item;
+  }));
+}
+
+function openProfile() {
+  profileReturnView = elements.gamePanel.hidden ? "welcome" : elements.app.dataset.state;
+  developer.stopReaction();
+  elements.welcomePanel.hidden = true;
+  elements.gamePanel.hidden = true;
+  elements.profilePanel.hidden = false;
+  elements.app.dataset.state = "profile";
+  renderProfile();
+  elements.profileBackButton.focus();
+}
+
+function closeProfile() {
+  elements.profilePanel.hidden = true;
+  if (profileReturnView === "welcome") {
+    elements.welcomePanel.hidden = false;
+    elements.app.dataset.state = "welcome";
+    elements.profileButton.focus();
+    return;
+  }
+
+  elements.gamePanel.hidden = false;
+  showView(profileReturnView);
+  elements.profileButton.focus();
 }
 
 async function loadJoke({ withTransitionSound = false } = {}) {
@@ -312,6 +380,19 @@ elements.feedbackButtons.forEach((button) => {
   button.addEventListener("click", () => submitFeedback(button.dataset.feedbackRating));
 });
 elements.feedbackSkipButton.addEventListener("click", finishFeedback);
+elements.profileButton.addEventListener("click", openProfile);
+elements.profileBackButton.addEventListener("click", closeProfile);
+elements.profileDonut.addEventListener("click", () => {
+  profileMascotIndex += 1;
+  renderProfile();
+});
+elements.profileResetButton.addEventListener("click", () => {
+  if (window.confirm(t("profile.resetConfirm"))) {
+    profile = profileStore.clear();
+    profileMascotIndex = 0;
+    renderProfile();
+  }
+});
 
 document.querySelectorAll("[data-locale-choice]").forEach((button) => {
   button.addEventListener("click", () => updatePreferences({ locale: button.dataset.localeChoice }));

@@ -32,6 +32,7 @@
         <span>Chutzi</span>
       </a>
       <div class="header-tools">
+        <button class="profile-toggle" id="profile-button" type="button" data-i18n-aria-label="profile.open" aria-label="Ouvrir ton profil humoristique"><span class="profile-toggle-icon" aria-hidden="true"></span></button>
         <button class="audio-toggle" id="audio-menu-button" type="button" data-i18n-aria-label="settings.open" aria-label="Ouvrir les réglages de Chutzi" aria-haspopup="dialog" aria-controls="audio-dialog">
           <span class="sound-on" aria-hidden="true">♫</span>
           <span class="sound-off" aria-hidden="true">×</span>
@@ -108,6 +109,14 @@
             </div>
           </div>
         </div>
+      </section>
+      <section class="profile-panel" id="profile-panel" aria-labelledby="profile-title" hidden>
+        <button class="profile-back" id="profile-back-button" type="button" data-i18n="profile.back">Retour à Chutzi</button>
+        <h1 id="profile-title" data-i18n="profile.title">Ta boussole de l'humour</h1>
+        <p class="profile-copy" id="profile-copy"></p>
+        <button class="profile-donut" id="profile-donut" type="button" aria-label="Humour profile"><img id="profile-mascot-image" src="assets/images/reactions/look.png" alt=""></button>
+        <ul class="profile-legend" id="profile-legend"></ul>
+        <button class="profile-reset" id="profile-reset-button" type="button" data-i18n="profile.reset">Réinitialiser mon profil</button>
       </section>
     </div>
 

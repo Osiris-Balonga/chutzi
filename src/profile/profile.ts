@@ -1,4 +1,4 @@
-import { readStoredValue, writeStoredValue, type KeyValueStore } from "../core/storage.js";
+import { readStoredValue, removeStoredValue, writeStoredValue, type KeyValueStore } from "../core/storage.js";
 import { JOKE_TAGS, type HumourProfile, type JokeFeedback, type JokeTag, type Rating } from "../core/types.js";
 
 const PROFILE_STORAGE_KEY = "chutzi-humour-profile-v1";
@@ -81,5 +81,11 @@ export function createProfileStore(store: KeyValueStore) {
     return profile;
   }
 
-  return { get, record };
+  function clear(): HumourProfile {
+    profile = createEmptyProfile();
+    removeStoredValue(store, PROFILE_STORAGE_KEY);
+    return profile;
+  }
+
+  return { clear, get, record };
 }
