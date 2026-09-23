@@ -1,4 +1,4 @@
-import { EXCLUDED_TERMS, JOKE_API_URL } from "./config.js";
+import { EXCLUDED_TERMS, getJokeApiUrl } from "./config.js";
 
 let lastJokeId = null;
 
@@ -32,11 +32,11 @@ function chooseJoke(data) {
   return selection[Math.floor(Math.random() * selection.length)];
 }
 
-export async function fetchJoke() {
-  const response = await fetch(JOKE_API_URL);
+export async function fetchJoke(locale = "fr") {
+  const response = await fetch(getJokeApiUrl(locale));
 
   if (!response.ok) {
-    throw new Error(`Erreur HTTP ${response.status}`);
+    throw new Error(`HTTP error ${response.status}`);
   }
 
   const data = await response.json();
