@@ -19,6 +19,13 @@ const messages = {
     "joke.reveal": "Reveal the answer",
     "joke.another": "Another one",
     "joke.quit": "Quit",
+    "feedback.title": "So, was that a good one?",
+    "feedback.skip": "Skip for now",
+    "feedback.love": "That was hilarious",
+    "feedback.like": "I loved it",
+    "feedback.neutral": "Not sure",
+    "feedback.skipRating": "Not my style",
+    "feedback.prompts": ["So, was that a good one?", "Well then?", "That was good, right?", "Tell me honestly: did it make you smile?"],
     "error.title": "Oops, the joke is hiding.",
     "error.copy": "Check your connection and try again.",
     "error.retry": "Try again",
@@ -85,6 +92,13 @@ const messages = {
     "joke.reveal": "Afficher la réponse",
     "joke.another": "Une autre",
     "joke.quit": "Quitter",
+    "feedback.title": "Alors, elle était bonne hein ?",
+    "feedback.skip": "Pas maintenant",
+    "feedback.love": "Très drôle !",
+    "feedback.like": "J'adore",
+    "feedback.neutral": "Je ne sais pas trop",
+    "feedback.skipRating": "Pas mon style",
+    "feedback.prompts": ["Alors, elle était bonne hein ?", "Alors ?", "Elle est bonne hein ?", "Dis-moi franchement : elle t'a fait sourire ?"],
     "error.title": "Oups, la blague s'est cachée.",
     "error.copy": "Vérifie ta connexion puis réessaie.",
     "error.retry": "Réessayer",
@@ -135,7 +149,7 @@ const messages = {
   }
 } as const;
 
-export type TranslationKey = keyof (typeof messages)["en"];
+export type TranslationKey = Exclude<keyof (typeof messages)["en"], "feedback.prompts">;
 
 export function translate(
   locale: Locale,
@@ -143,4 +157,9 @@ export function translate(
   values: Record<string, string> = {}
 ): string {
   return messages[locale][key].replace(/\{(\w+)\}/g, (_, name: string) => values[name] ?? "");
+}
+
+export function getFeedbackPrompt(locale: Locale, index: number): string {
+  const prompts = messages[locale]["feedback.prompts"];
+  return prompts[index % prompts.length];
 }
