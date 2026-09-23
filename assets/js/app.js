@@ -117,7 +117,7 @@ async function loadJoke({ withTransitionSound = false } = {}) {
 
     elements.revealButton.focus();
   } catch (error) {
-    console.error("Impossible de charger la blague :", error);
+    console.error("Unable to load joke:", error);
     showView("error");
     audio.playEffect("fail", { maxDuration: 2600, duckDuration: 2600 });
     document.querySelector("#retry-button").focus();
