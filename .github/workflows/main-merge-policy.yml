@@ -1,0 +1,36 @@
+name: Main merge policy
+
+on:
+  pull_request_target:
+    branches:
+      - main
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - ready_for_review
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  only-from-dev:
+    name: Only allow dev as the source
+    runs-on: ubuntu-latest
+    env:
+      EXPECTED_REPOSITORY: ${{ github.repository }}
+      PR_HEAD_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name }}
+      PR_HEAD_REF: ${{ github.event.pull_request.head.ref }}
+    steps:
+      - name: Reject every source except dev in this repository
+        run: |
+          if [[ "$PR_HEAD_REPOSITORY" != "$EXPECTED_REPOSITORY" ]]; then
+            echo "A pull request into main must originate from this repository's dev branch."
+            exit 1
+          fi
+
+          if [[ "$PR_HEAD_REF" != "dev" ]]; then
+            echo "A pull request into main must use dev as its source branch; received '$PR_HEAD_REF'."
+            exit 1
+          fi

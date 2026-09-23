@@ -1,0 +1,71 @@
+name: Quality
+
+on:
+  pull_request:
+    branches:
+      - dev
+      - main
+  push:
+    branches:
+      - dev
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quality-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  branch-name:
+    name: Validate branch name
+    if: github.event_name == 'pull_request' && github.base_ref == 'dev'
+    runs-on: ubuntu-latest
+    env:
+      PR_HEAD_REF: ${{ github.head_ref }}
+    steps:
+      - name: Require an approved branch prefix
+        run: |
+          if [[ "$PR_HEAD_REF" =~ ^(feature|fix|chore|docs|refactor|test)/[a-z0-9]+(-[a-z0-9]+)*$ ]]; then
+            exit 0
+          fi
+
+          echo "Branch '$PR_HEAD_REF' must use one of: feature/, fix/, chore/, docs/, refactor/ or test/."
+          exit 1
+
+  static-checks:
+    name: Static checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          check-latest: true
+
+      - name: Reject whitespace errors
+        run: git diff --check "$(git hash-object -t tree /dev/null)" HEAD
+
+      - name: Parse browser modules
+        run: |
+          for file in assets/js/*.js; do
+            node --check "$file"
+          done
+
+      - name: Verify local HTML assets
+        run: |
+          node --input-type=module <<'NODE'
+          import { existsSync, readFileSync } from "node:fs";
+
+          const html = readFileSync("index.html", "utf8");
+          const references = [...html.matchAll(/(?:src|href)="([^"]+)"/g)]
+            .map((match) => match[1])
+            .filter((path) => path && !path.startsWith("https://") && !path.startsWith("http://") && !path.startsWith("#"));
+          const missing = references.filter((path) => !existsSync(path));
+
+          if (missing.length > 0) {
+            throw new Error(`Missing local assets: ${missing.join(", ")}`);
+          }
+          NODE
