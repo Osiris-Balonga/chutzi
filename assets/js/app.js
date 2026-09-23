@@ -2,6 +2,8 @@ import { createAudioController } from "./audio.js";
 import { createDeveloperController } from "./developer.js";
 import { fetchJoke, resetJokeHistory } from "./jokes.js";
 import { createMascotController } from "./mascot.js";
+import { createPreferencesStore, resolveBrowserLocale } from "./core/preferences.js";
+import { getFeedbackPrompt, translate } from "./core/i18n.js";
 
 const elements = {
   app: document.querySelector("#app"),
@@ -15,12 +17,18 @@ const elements = {
   jokeDelivery: document.querySelector("#joke-delivery"),
   revealButton: document.querySelector("#reveal-button"),
   jokeActions: document.querySelector("#joke-actions"),
+  feedbackPanel: document.querySelector("#feedback-panel"),
+  feedbackPrompt: document.querySelector("#feedback-prompt"),
+  feedbackButtons: [...document.querySelectorAll("[data-feedback-rating]")],
+  feedbackSkipButton: document.querySelector("#feedback-skip-button"),
   mascot: document.querySelector("#mascot"),
   audioMenuButton: document.querySelector("#audio-menu-button"),
   audioDialog: document.querySelector("#audio-dialog"),
   audioCloseButton: document.querySelector("#audio-close-button"),
   musicToggle: document.querySelector("#music-toggle"),
   effectsToggle: document.querySelector("#effects-toggle"),
+  onboardingDialog: document.querySelector("#onboarding-dialog"),
+  onboardingContinueButton: document.querySelector("#onboarding-continue-button"),
   developerPanel: document.querySelector("#developer-panel"),
   developerClose: document.querySelector("#developer-close"),
   developerHint: document.querySelector("#developer-hint"),
@@ -28,11 +36,44 @@ const elements = {
   developerReactionButtons: [...document.querySelectorAll(".developer-reaction")]
 };
 
+const browserStorage = {
+  getItem(key) {
+    try {
+      return window.localStorage.getItem(key);
+    } catch {
+      return null;
+    }
+  },
+  setItem(key, value) {
+    try {
+      window.localStorage.setItem(key, value);
+    } catch {
+      // The current session still keeps its in-memory preferences.
+    }
+  },
+  removeItem(key) {
+    try {
+      window.localStorage.removeItem(key);
+    } catch {
+      // There is no persisted value to remove when storage is unavailable.
+    }
+  }
+};
+
+const preferenceStore = createPreferencesStore(browserStorage, resolveBrowserLocale(navigator.language));
+let preferences = preferenceStore.get();
+browserStorage.removeItem("chutzi-humour-profile-v1");
+
+function t(key, values) {
+  return translate(preferences.locale, key, values);
+}
+
 const audio = createAudioController({
   app: elements.app,
   menuButton: elements.audioMenuButton,
   musicToggle: elements.musicToggle,
-  effectsToggle: elements.effectsToggle
+  effectsToggle: elements.effectsToggle,
+  translate: t
 });
 
 const mascot = createMascotController({
@@ -44,8 +85,49 @@ const mascot = createMascotController({
 
 let loadedJokeCount = 0;
 let dialogCloseTimer = null;
+let audioDialogReturnFocus = null;
 let musicPausedByVisibility = false;
+let jokeRequestId = 0;
+let promptIndex = 0;
 let developer;
+
+function applyTranslations() {
+  document.documentElement.lang = preferences.locale;
+  document.title = t("document.title");
+
+  document.querySelectorAll("[data-i18n]").forEach((element) => {
+    element.textContent = t(element.dataset.i18n);
+  });
+  document.querySelectorAll("[data-i18n-aria-label]").forEach((element) => {
+    element.setAttribute("aria-label", t(element.dataset.i18nAriaLabel));
+  });
+  document.querySelectorAll("[data-i18n-content]").forEach((element) => {
+    element.setAttribute("content", t(element.dataset.i18nContent));
+  });
+
+  audio.updateControls();
+  developer?.sync();
+}
+
+function syncPreferenceControls() {
+  document.querySelectorAll("[data-locale-choice]").forEach((button) => {
+    button.setAttribute("aria-pressed", String(button.dataset.localeChoice === preferences.locale));
+  });
+  document.querySelectorAll("[data-tone-choice]").forEach((button) => {
+    button.setAttribute("aria-pressed", String(button.dataset.toneChoice === preferences.humourTone));
+  });
+}
+
+function updatePreferences(changes) {
+  const previousLocale = preferences.locale;
+  preferences = preferenceStore.update(changes);
+  applyTranslations();
+  syncPreferenceControls();
+
+  if (previousLocale !== preferences.locale && !elements.gamePanel.hidden) {
+    void loadJoke({ withTransitionSound: true });
+  }
+}
 
 function closeAudioDialog({ restoreFocus = true } = {}) {
   if (!elements.audioDialog.open || elements.audioDialog.classList.contains("is-closing")) {
@@ -64,7 +146,7 @@ function closeAudioDialog({ restoreFocus = true } = {}) {
     if (developer.isEnabled()) {
       elements.developerClose.focus();
     } else {
-      elements.audioMenuButton.focus();
+      (audioDialogReturnFocus?.isConnected ? audioDialogReturnFocus : elements.audioMenuButton).focus();
       mascot.scheduleIdle();
     }
   }, 160);
@@ -72,6 +154,7 @@ function closeAudioDialog({ restoreFocus = true } = {}) {
 
 function openAudioDialog() {
   window.clearTimeout(dialogCloseTimer);
+  audioDialogReturnFocus = document.activeElement;
   developer.stopReaction();
   elements.audioDialog.classList.remove("is-closing");
   elements.audioDialog.showModal();
@@ -86,6 +169,7 @@ function showView(name) {
   elements.jokeAnswer.hidden = name !== "revealed";
   elements.revealButton.hidden = name !== "question";
   elements.jokeActions.hidden = name !== "revealed";
+  elements.feedbackPanel.hidden = true;
   elements.app.dataset.state = name;
   developer.sync();
 
@@ -95,6 +179,7 @@ function showView(name) {
 }
 
 async function loadJoke({ withTransitionSound = false } = {}) {
+  const requestId = ++jokeRequestId;
   audio.stopEffect("laugh");
   audio.stopEffect("mischievousLaugh");
 
@@ -105,7 +190,12 @@ async function loadJoke({ withTransitionSound = false } = {}) {
   showView("loading");
 
   try {
-    const joke = await fetchJoke();
+    const joke = await fetchJoke(preferences.locale, preferences.humourTone);
+
+    if (requestId !== jokeRequestId) {
+      return;
+    }
+
     loadedJokeCount += 1;
     elements.jokeQuestion.textContent = joke.setup;
     elements.jokeDelivery.textContent = joke.delivery;
@@ -117,6 +207,9 @@ async function loadJoke({ withTransitionSound = false } = {}) {
 
     elements.revealButton.focus();
   } catch (error) {
+    if (requestId !== jokeRequestId) {
+      return;
+    }
     console.error("Unable to load joke:", error);
     showView("error");
     audio.playEffect("fail", { maxDuration: 2600, duckDuration: 2600 });
@@ -136,9 +229,24 @@ function startGame() {
 
 function revealAnswer() {
   showView("revealed");
+  elements.jokeActions.hidden = true;
+  elements.feedbackPanel.hidden = false;
+  elements.feedbackPrompt.textContent = getFeedbackPrompt(preferences.locale, promptIndex);
+  promptIndex += 1;
   const laugh = Math.random() < 0.24 ? "mischievousLaugh" : "laugh";
   mascot.trigger("laugh", { sound: laugh });
+  elements.feedbackButtons[0].focus();
+}
+
+function finishFeedback() {
+  elements.feedbackPanel.hidden = true;
+  elements.jokeActions.hidden = false;
   document.querySelector("#another-button").focus();
+}
+
+function submitFeedback(rating) {
+  mascot.trigger(rating === "love" ? "laugh" : rating === "skip" ? "think" : "chat");
+  finishFeedback();
 }
 
 function quitGame() {
@@ -166,6 +274,7 @@ developer = createDeveloperController({
   startButton: elements.developerStart,
   reactionButtons: elements.developerReactionButtons,
   mascot,
+  translate: t,
   onOpen: () => {
     if (elements.audioDialog.open) {
       closeAudioDialog({ restoreFocus: false });
@@ -184,6 +293,24 @@ document.querySelector("#another-button").addEventListener("click", () => loadJo
 document.querySelector("#retry-button").addEventListener("click", () => loadJoke({ withTransitionSound: true }));
 document.querySelector("#quit-button").addEventListener("click", quitGame);
 document.querySelector("#error-quit-button").addEventListener("click", quitGame);
+elements.feedbackButtons.forEach((button) => {
+  button.addEventListener("click", () => submitFeedback(button.dataset.feedbackRating));
+});
+elements.feedbackSkipButton.addEventListener("click", finishFeedback);
+
+document.querySelectorAll("[data-locale-choice]").forEach((button) => {
+  button.addEventListener("click", () => updatePreferences({ locale: button.dataset.localeChoice }));
+});
+document.querySelectorAll("[data-tone-choice]").forEach((button) => {
+  button.addEventListener("click", () => updatePreferences({ humourTone: button.dataset.toneChoice }));
+});
+
+elements.onboardingContinueButton.addEventListener("click", () => {
+  updatePreferences({ onboardingCompleted: true });
+  elements.onboardingDialog.close();
+  document.querySelector("#start-button").focus();
+});
+elements.onboardingDialog.addEventListener("cancel", (event) => event.preventDefault());
 
 elements.audioMenuButton.addEventListener("click", () => {
   audio.playEffect("click");
@@ -227,5 +354,11 @@ const developerModeFromQuery = ["1", "true", "chutzi"].includes(
   (developerQueryValue || "").toLowerCase()
 );
 
+applyTranslations();
+syncPreferenceControls();
 developer.sync();
 developer.setEnabled(developerModeFromQuery);
+
+if (!preferences.onboardingCompleted) {
+  elements.onboardingDialog.showModal();
+}

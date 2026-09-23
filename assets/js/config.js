@@ -1,21 +1,3 @@
-export const JOKE_API_URL = "https://v2.jokeapi.dev/joke/Any?lang=fr&type=twopart&safe-mode&amount=10";
-
-export const EXCLUDED_TERMS = [
-  "sodom",
-  "sexe",
-  "penis",
-  "vagin",
-  "porno",
-  "bite",
-  "couille",
-  "pute",
-  "drogue",
-  "cannabis",
-  "alcool",
-  "biere",
-  "viol"
-];
-
 export const AUDIO_CONFIG = {
   music: {
     path: "assets/audio/background-music.mp3",

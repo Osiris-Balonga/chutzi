@@ -77,7 +77,7 @@ p {
   grid-template-rows: 64px minmax(0, 1fr);
   width: min(100%, 820px);
   height: 100svh;
-  min-height: 480px;
+  min-height: 0;
   margin-inline: auto;
   padding: 0 20px;
   overflow: hidden;

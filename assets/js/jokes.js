@@ -1,55 +1,35 @@
-import { EXCLUDED_TERMS, JOKE_API_URL } from "./config.js";
+import { createJokeSelector } from "./selection/selector.js";
 
-let lastJokeId = null;
-
-function normalizeText(text) {
-  return text
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase();
-}
-
-function isFamilyFriendly(joke) {
-  const text = normalizeText(`${joke.setup} ${joke.delivery}`);
-  const hasFlag = Object.values(joke.flags || {}).some(Boolean);
-
-  return joke.type === "twopart"
-    && joke.safe !== false
-    && !hasFlag
-    && !EXCLUDED_TERMS.some((term) => text.includes(term));
-}
-
-function chooseJoke(data) {
-  const jokes = Array.isArray(data.jokes) ? data.jokes : [data];
-  const candidates = jokes.filter(isFamilyFriendly);
-  const unseenCandidates = candidates.filter((joke) => joke.id !== lastJokeId);
-  const selection = unseenCandidates.length > 0 ? unseenCandidates : candidates;
-
-  if (selection.length === 0) {
-    throw new Error("No family-friendly joke is available");
+const browserStorage = {
+  getItem(key) {
+    try {
+      return window.localStorage.getItem(key);
+    } catch {
+      return null;
+    }
+  },
+  setItem(key, value) {
+    try {
+      window.localStorage.setItem(key, value);
+    } catch {
+      // The selector remains available for the current session.
+    }
+  },
+  removeItem(key) {
+    try {
+      window.localStorage.removeItem(key);
+    } catch {
+      // There is no persisted selector state to remove.
+    }
   }
+};
 
-  return selection[Math.floor(Math.random() * selection.length)];
-}
+const selector = createJokeSelector({ store: browserStorage });
 
-export async function fetchJoke() {
-  const response = await fetch(JOKE_API_URL);
-
-  if (!response.ok) {
-    throw new Error(`Erreur HTTP ${response.status}`);
-  }
-
-  const data = await response.json();
-
-  if (data.error) {
-    throw new Error(data.message || "Unexpected API response");
-  }
-
-  const joke = chooseJoke(data);
-  lastJokeId = joke.id;
-  return joke;
+export async function fetchJoke(locale, tone) {
+  return selector.next({ locale, tone });
 }
 
 export function resetJokeHistory() {
-  lastJokeId = null;
+  selector.clearQueue();
 }

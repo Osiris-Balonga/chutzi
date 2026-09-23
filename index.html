@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Chutzi te raconte une blague aléatoire à révéler quand tu es prêt.">
+  <meta name="description" data-i18n-content="document.description" content="Découvre des blagues légères avec une mascotte animée, de la musique et des réactions surprises.">
   <meta name="theme-color" content="#b2eb06">
   <meta name="robots" content="index, follow">
   <meta property="og:type" content="website">
-  <meta property="og:locale" content="fr_FR">
-  <meta property="og:title" content="Chutzi - Une blague pour toi">
-  <meta property="og:description" content="Découvre des blagues françaises avec une mascotte animée, de la musique et des réactions surprises.">
+  <meta property="og:locale" data-i18n-content="document.ogLocale" content="fr_FR">
+  <meta property="og:title" data-i18n-content="document.title" content="Chutzi - Une blague pour toi">
+  <meta property="og:description" data-i18n-content="document.description" content="Découvre des blagues légères avec une mascotte animée, de la musique et des réactions surprises.">
   <meta property="og:url" content="https://osiris-balonga.github.io/chutzi/">
   <meta property="og:image" content="https://osiris-balonga.github.io/chutzi/assets/images/previews/readme-preview.png">
   <meta name="twitter:card" content="summary_large_image">
@@ -27,25 +27,23 @@
 <body>
   <main class="app" id="app" data-state="welcome">
     <header class="app-header">
-      <a class="brand" href="index.html" aria-label="Chutzi, retour à l'accueil">
+      <a class="brand" href="index.html" data-i18n-aria-label="brand.home" aria-label="Chutzi, retour à l'accueil">
         <img class="brand-logo" src="assets/images/brand/chutzi-logo.png" alt="" width="44" height="44">
         <span>Chutzi</span>
       </a>
       <div class="header-tools">
-        <button class="audio-toggle" id="audio-menu-button" type="button" aria-label="Ouvrir les réglages audio" aria-haspopup="dialog" aria-controls="audio-dialog">
-          <span class="sound-on" aria-hidden="true">♫</span>
-          <span class="sound-off" aria-hidden="true">×</span>
-          <span class="audio-status-dot" aria-hidden="true"></span>
+        <button class="audio-toggle" id="audio-menu-button" type="button" data-i18n-aria-label="settings.open" aria-label="Ouvrir les réglages de Chutzi" aria-haspopup="dialog" aria-controls="audio-dialog">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M19.14 12.94c.04-.3.06-.61.06-.94s-.02-.64-.06-.94l2.03-1.58a.5.5 0 0 0 .12-.64l-1.92-3.32a.5.5 0 0 0-.61-.22l-2.39.96a7.2 7.2 0 0 0-1.63-.95l-.36-2.51a.5.5 0 0 0-.5-.42h-3.84a.5.5 0 0 0-.5.42l-.36 2.51c-.59.23-1.14.55-1.63.95l-2.39-.96a.5.5 0 0 0-.61.22L2.63 8.84a.5.5 0 0 0 .12.64l2.03 1.58a7.2 7.2 0 0 0 0 1.88l-2.03 1.58a.5.5 0 0 0-.12.64l1.92 3.32a.5.5 0 0 0 .61.22l2.39-.96c.49.4 1.04.72 1.63.95l.36 2.51a.5.5 0 0 0 .5.42h3.84a.5.5 0 0 0 .5-.42l.36-2.51c.59-.23 1.14-.55 1.63-.95l2.39.96a.5.5 0 0 0 .61-.22l1.92-3.32a.5.5 0 0 0-.12-.64z"/><circle cx="12" cy="12" r="3.4" fill="#070f36"/></svg>
         </button>
       </div>
     </header>
 
     <div class="experience">
       <section class="welcome-panel" id="welcome-panel" aria-labelledby="welcome-title">
-        <p class="welcome-intro">Besoin d'une petite pause ?</p>
-        <h1 id="welcome-title">Prêt à rire<br>un peu ?</h1>
-        <p class="welcome-copy">Chutzi a toujours une blague sous la main. À toi de découvrir la chute.</p>
-        <button class="button button-primary" id="start-button" type="button">Commencer</button>
+        <p class="welcome-intro" data-i18n="welcome.intro">Besoin d'une petite pause ?</p>
+        <h1 id="welcome-title" data-i18n="welcome.title">Prêt à rire un peu ?</h1>
+        <p class="welcome-copy" data-i18n="welcome.copy">Chutzi a toujours une blague sous la main. À toi de découvrir la chute.</p>
+        <button class="button button-primary" id="start-button" type="button" data-i18n="welcome.start">Commencer</button>
       </section>
 
       <div class="mascot-zone" id="mascot-zone" aria-hidden="true">
@@ -55,12 +53,8 @@
           <span class="mascot-horn mascot-horn-right"></span>
           <span class="mascot-brow mascot-brow-left"></span>
           <span class="mascot-brow mascot-brow-right"></span>
-          <span class="mascot-eye mascot-eye-left">
-            <span class="mascot-pupil"><i></i></span>
-          </span>
-          <span class="mascot-eye mascot-eye-right">
-            <span class="mascot-pupil"><i></i></span>
-          </span>
+          <span class="mascot-eye mascot-eye-left"><span class="mascot-pupil"><i></i></span></span>
+          <span class="mascot-eye mascot-eye-right"><span class="mascot-pupil"><i></i></span></span>
           <span class="mascot-nose"><i></i><i></i></span>
           <span class="mascot-mouth"></span>
           <span class="mascot-sleep-symbols"><i>Z</i><i>Z</i><i>Z</i></span>
@@ -70,35 +64,45 @@
         <span class="mascot-stage-shadow"></span>
       </div>
 
-      <section class="game-panel" id="game-panel" aria-label="Jeu de blagues" hidden>
+      <section class="game-panel" id="game-panel" data-i18n-aria-label="game.region" aria-label="Jeu de blagues" hidden>
         <div class="status-region" id="status-region" aria-live="polite" aria-atomic="true">
           <div class="loading-view" id="loading-view" hidden>
             <span class="spinner" aria-hidden="true"></span>
-            <h2 id="game-title">Je cherche la bonne...</h2>
-            <p>Chutzi fouille dans sa réserve de blagues.</p>
+            <h2 id="game-title" data-i18n="loading.title">Je cherche la bonne...</h2>
+            <p data-i18n="loading.copy">Chutzi fouille dans sa réserve de blagues.</p>
           </div>
 
           <article class="joke-view" id="joke-view" hidden>
-            <p class="joke-label">Ta blague</p>
+            <p class="joke-label" data-i18n="joke.label">Ta blague</p>
             <h2 class="joke-question" id="joke-question"></h2>
             <div class="joke-answer" id="joke-answer" hidden>
-              <span>La réponse</span>
+              <span data-i18n="joke.answer">La réponse</span>
               <p id="joke-delivery"></p>
             </div>
-            <button class="button button-primary" id="reveal-button" type="button">Afficher la réponse</button>
+            <button class="button button-primary" id="reveal-button" type="button" data-i18n="joke.reveal">Afficher la réponse</button>
+            <section class="feedback-panel" id="feedback-panel" aria-labelledby="feedback-prompt" hidden>
+              <p class="feedback-kicker" id="feedback-prompt">Alors, elle était bonne hein ?</p>
+              <div class="feedback-reactions" role="group" data-i18n-aria-label="feedback.title" aria-label="Alors, elle était bonne hein ?">
+                <button class="feedback-reaction" type="button" data-feedback-rating="love" data-i18n-aria-label="feedback.love" aria-label="Très drôle !"><img src="assets/images/reactions/laugh.png" alt="" width="52" height="52"><span data-i18n="feedback.love">Très drôle !</span></button>
+                <button class="feedback-reaction" type="button" data-feedback-rating="like" data-i18n-aria-label="feedback.like" aria-label="Pas mal"><img src="assets/images/reactions/chat.png" alt="" width="52" height="52"><span data-i18n="feedback.like">Pas mal</span></button>
+                <button class="feedback-reaction" type="button" data-feedback-rating="neutral" data-i18n-aria-label="feedback.neutral" aria-label="Je ne sais pas trop"><img src="assets/images/reactions/think.png" alt="" width="52" height="52"><span data-i18n="feedback.neutral">Je ne sais pas trop</span></button>
+                <button class="feedback-reaction" type="button" data-feedback-rating="skip" data-i18n-aria-label="feedback.skipRating" aria-label="Pas très drôle"><img src="assets/images/reactions/error.png" alt="" width="52" height="52"><span data-i18n="feedback.skipRating">Pas très drôle</span></button>
+              </div>
+              <button class="feedback-skip" id="feedback-skip-button" type="button" data-i18n="feedback.skip">Pas maintenant</button>
+            </section>
             <div class="joke-actions" id="joke-actions" hidden>
-              <button class="button button-primary" id="another-button" type="button">Une autre</button>
-              <button class="button button-secondary" id="quit-button" type="button">Quitter</button>
+              <button class="button button-primary" id="another-button" type="button" data-i18n="joke.another">Une autre</button>
+              <button class="button button-secondary" id="quit-button" type="button" data-i18n="joke.quit">Quitter</button>
             </div>
           </article>
 
           <div class="error-view" id="error-view" role="alert" hidden>
             <span class="error-face" aria-hidden="true">:(</span>
-            <h2>Oups, la blague s'est cachée.</h2>
-            <p>Vérifie ta connexion puis réessaie.</p>
+            <h2 data-i18n="error.title">Oups, la blague s'est cachée.</h2>
+            <p data-i18n="error.copy">Vérifie ta connexion puis réessaie.</p>
             <div class="joke-actions">
-              <button class="button button-primary" id="retry-button" type="button">Réessayer</button>
-              <button class="button button-secondary" id="error-quit-button" type="button">Quitter</button>
+              <button class="button button-primary" id="retry-button" type="button" data-i18n="error.retry">Réessayer</button>
+              <button class="button button-secondary" id="error-quit-button" type="button" data-i18n="joke.quit">Quitter</button>
             </div>
           </div>
         </div>
@@ -106,8 +110,8 @@
     </div>
 
     <footer class="app-footer">
-      <span>Une blague, une chute.</span>
-      <a href="https://jokeapi.dev/" target="_blank" rel="noreferrer">JokeAPI</a>
+      <span data-i18n="footer.copy">Une blague, une chute.</span>
+      <span data-i18n="footer.source">Réserve locale</span>
     </footer>
   </main>
 
@@ -115,87 +119,101 @@
     <div class="audio-sheet">
       <header class="audio-sheet-header">
         <div>
-          <p class="audio-sheet-kicker">Le mix de Chutzi</p>
-          <h2 id="audio-dialog-title">Réglages audio</h2>
+          <p class="audio-sheet-kicker" data-i18n="settings.kicker">Le coin de Chutzi</p>
+          <h2 id="audio-dialog-title" data-i18n="settings.title">Réglages de Chutzi</h2>
         </div>
-        <button class="audio-close" id="audio-close-button" type="button" aria-label="Fermer les réglages audio">×</button>
+        <button class="audio-close" id="audio-close-button" type="button" data-i18n-aria-label="settings.close" aria-label="Fermer les réglages de Chutzi">×</button>
       </header>
+      <div class="audio-sheet-content" role="region" aria-labelledby="audio-dialog-title" tabindex="0">
+      <p class="audio-sheet-copy" data-i18n="settings.copy">Choisis ta langue, le genre de malice qui te plaît et ce que tu veux entendre.</p>
+      <p class="settings-privacy" data-i18n="settings.privacy">Tes choix restent dans ce navigateur. Aucun compte ni serveur n'est nécessaire.</p>
 
-      <p class="audio-sheet-copy">Choisis ce que tu veux entendre. La musique et les effets restent indépendants.</p>
+      <section class="settings-section" aria-labelledby="language-settings-title">
+        <h3 id="language-settings-title" data-i18n="settings.language">Langue</h3>
+        <p data-i18n="settings.languageHint">L'interface et les blagues suivent ce choix.</p>
+        <div class="language-choices" role="group" aria-labelledby="language-settings-title">
+          <button class="preference-choice" type="button" data-locale-choice="fr" data-i18n="language.fr" aria-pressed="true">Français</button>
+          <button class="preference-choice" type="button" data-locale-choice="en" data-i18n="language.en" aria-pressed="false">Anglais</button>
+        </div>
+      </section>
 
-      <div class="audio-settings">
-        <button class="audio-setting" id="music-toggle" type="button" role="switch" aria-checked="true">
-          <span class="audio-setting-icon" aria-hidden="true">♫</span>
-          <span class="audio-setting-copy">
-            <strong>Musique</strong>
-            <small>L'ambiance qui accompagne le jeu</small>
-          </span>
-          <span class="switch-visual" aria-hidden="true"><i></i></span>
-        </button>
+      <section class="settings-section" aria-labelledby="tone-settings-title">
+        <h3 id="tone-settings-title" data-i18n="settings.tone">Ton des blagues</h3>
+        <p data-i18n="settings.toneHint">Chaque ton reste bienveillant et adapté à tout le monde.</p>
+        <div class="tone-choices tone-choices-compact" role="group" aria-labelledby="tone-settings-title">
+          <button class="tone-choice tone-safe" type="button" data-tone-choice="safe" aria-pressed="true">
+            <span class="tone-illustration"><img src="assets/images/reactions/look.png" alt="" width="44" height="44"></span>
+            <span><strong data-i18n="tone.safe">Doux</strong><small data-i18n="tone.safeHint">Léger et sympa</small></span>
+          </button>
+          <button class="tone-choice tone-playful" type="button" data-tone-choice="playful" aria-pressed="false">
+            <span class="tone-illustration"><img src="assets/images/reactions/laugh.png" alt="" width="44" height="44"></span>
+            <span><strong data-i18n="tone.playful">Espiègle</strong><small data-i18n="tone.playfulHint">Un peu taquin</small></span>
+          </button>
+          <button class="tone-choice tone-mischievous" type="button" data-tone-choice="mischievous" aria-pressed="false">
+            <span class="tone-illustration"><img src="assets/images/reactions/devil.png" alt="" width="44" height="44"></span>
+            <span><strong data-i18n="tone.mischievous">Diablotin</strong><small data-i18n="tone.mischievousHint">Frissons, jamais méchant</small></span>
+          </button>
+        </div>
+      </section>
 
-        <button class="audio-setting" id="effects-toggle" type="button" role="switch" aria-checked="true">
-          <span class="audio-setting-icon" aria-hidden="true">✦</span>
-          <span class="audio-setting-copy">
-            <strong>Effets sonores</strong>
-            <small>Clics, sauts et réactions de Chutzi</small>
-          </span>
-          <span class="switch-visual" aria-hidden="true"><i></i></span>
-        </button>
+      <section class="settings-section settings-section-audio" data-i18n-aria-label="settings.audioGroup" aria-label="Réglages audio">
+        <div class="audio-settings">
+          <button class="audio-setting" id="music-toggle" type="button" role="switch" aria-checked="true">
+            <span class="audio-setting-icon" aria-hidden="true">♫</span>
+            <span class="audio-setting-copy"><strong data-i18n="audio.music">Musique</strong><small data-i18n="audio.musicHint">L'ambiance qui accompagne le jeu</small></span>
+            <span class="switch-visual" aria-hidden="true"><i></i></span>
+          </button>
+          <button class="audio-setting" id="effects-toggle" type="button" role="switch" aria-checked="true">
+            <span class="audio-setting-icon" aria-hidden="true">✦</span>
+            <span class="audio-setting-copy"><strong data-i18n="audio.effects">Effets sonores</strong><small data-i18n="audio.effectsHint">Clics, sauts et réactions de Chutzi</small></span>
+            <span class="switch-visual" aria-hidden="true"><i></i></span>
+          </button>
+        </div>
+      </section>
       </div>
+    </div>
+  </dialog>
+
+  <dialog class="audio-dialog onboarding-dialog" id="onboarding-dialog" aria-labelledby="onboarding-title">
+    <div class="audio-sheet">
+      <p class="audio-sheet-kicker" data-i18n="onboarding.kicker">Salut, moi c'est Chutzi</p>
+      <h2 id="onboarding-title" data-i18n="onboarding.title">Avant de rire...</h2>
+      <p class="audio-sheet-copy" data-i18n="onboarding.copy">Choisis une langue et un ton. Tu pourras les changer quand tu veux dans les réglages.</p>
+      <section class="settings-section">
+        <div class="language-choices" role="group" data-i18n-aria-label="settings.language" aria-label="Langue">
+          <button class="preference-choice" type="button" data-locale-choice="fr" data-i18n="language.fr" aria-pressed="true">Français</button>
+          <button class="preference-choice" type="button" data-locale-choice="en" data-i18n="language.en" aria-pressed="false">Anglais</button>
+        </div>
+      </section>
+      <section class="settings-section">
+        <div class="tone-choices tone-choices-compact" role="group" data-i18n-aria-label="settings.tone" aria-label="Ton des blagues">
+          <button class="tone-choice tone-safe" type="button" data-tone-choice="safe" aria-pressed="true"><span class="tone-illustration"><img src="assets/images/reactions/look.png" alt="" width="44" height="44"></span><span><strong data-i18n="tone.safe">Doux</strong><small data-i18n="tone.safeHint">Léger et sympa</small></span></button>
+          <button class="tone-choice tone-playful" type="button" data-tone-choice="playful" aria-pressed="false"><span class="tone-illustration"><img src="assets/images/reactions/laugh.png" alt="" width="44" height="44"></span><span><strong data-i18n="tone.playful">Espiègle</strong><small data-i18n="tone.playfulHint">Un peu taquin</small></span></button>
+          <button class="tone-choice tone-mischievous" type="button" data-tone-choice="mischievous" aria-pressed="false"><span class="tone-illustration"><img src="assets/images/reactions/devil.png" alt="" width="44" height="44"></span><span><strong data-i18n="tone.mischievous">Diablotin</strong><small data-i18n="tone.mischievousHint">Frissons, jamais méchant</small></span></button>
+        </div>
+      </section>
+      <button class="button button-primary" id="onboarding-continue-button" type="button" data-i18n="onboarding.continue">C'est parti</button>
     </div>
   </dialog>
 
   <aside class="developer-panel" id="developer-panel" aria-labelledby="developer-title" hidden>
     <header class="developer-header">
-      <div>
-        <p class="developer-kicker">Mode développeur</p>
-        <h2 id="developer-title">Réactions de Chutzi</h2>
-      </div>
-      <button class="developer-close" id="developer-close" type="button" aria-label="Fermer le mode développeur">×</button>
+      <div><p class="developer-kicker" data-i18n="developer.kicker">Mode développeur</p><h2 id="developer-title" data-i18n="developer.title">Réactions de Chutzi</h2></div>
+      <button class="developer-close" id="developer-close" type="button" data-i18n-aria-label="developer.close" aria-label="Fermer le mode développeur">×</button>
     </header>
-
-    <p class="developer-hint" id="developer-hint">Démarre le jeu pour débloquer les réactions.</p>
-    <button class="button button-primary developer-start" id="developer-start" type="button">Démarrer le jeu</button>
-
-    <div class="developer-reactions" role="group" aria-label="Déclencher une réaction de Chutzi">
-      <button class="developer-reaction" type="button" data-reaction="look" aria-pressed="false">
-        <img src="assets/images/reactions/look.png" alt="" width="48" height="48">
-        <span>Regard</span>
-      </button>
-      <button class="developer-reaction" type="button" data-reaction="hop" aria-pressed="false">
-        <img src="assets/images/reactions/hop.png" alt="" width="48" height="48">
-        <span>Saut</span>
-      </button>
-      <button class="developer-reaction" type="button" data-reaction="think" aria-pressed="false">
-        <img src="assets/images/reactions/think.png" alt="" width="48" height="48">
-        <span>Réflexion</span>
-      </button>
-      <button class="developer-reaction" type="button" data-reaction="chat" aria-pressed="false">
-        <img src="assets/images/reactions/chat.png" alt="" width="48" height="48">
-        <span>Bavardage</span>
-      </button>
-      <button class="developer-reaction" type="button" data-reaction="sleep" aria-pressed="false">
-        <img src="assets/images/reactions/sleep.png" alt="" width="48" height="48">
-        <span>Sommeil</span>
-      </button>
-      <button class="developer-reaction" type="button" data-reaction="sing" aria-pressed="false">
-        <img src="assets/images/reactions/sing.png" alt="" width="48" height="48">
-        <span>Chant</span>
-      </button>
-      <button class="developer-reaction" type="button" data-reaction="devil" aria-pressed="false">
-        <img src="assets/images/reactions/devil.png" alt="" width="48" height="48">
-        <span>Diablotin</span>
-      </button>
-      <button class="developer-reaction" type="button" data-reaction="laugh" aria-pressed="false">
-        <img src="assets/images/reactions/laugh.png" alt="" width="48" height="48">
-        <span>Rire</span>
-      </button>
-      <button class="developer-reaction" type="button" data-reaction="error" aria-pressed="false">
-        <img src="assets/images/reactions/error.png" alt="" width="48" height="48">
-        <span>Erreur</span>
-      </button>
+    <p class="developer-hint" id="developer-hint" data-i18n="developer.hint">Démarre le jeu pour débloquer les réactions.</p>
+    <button class="button button-primary developer-start" id="developer-start" type="button" data-i18n="developer.start">Démarrer le jeu</button>
+    <div class="developer-reactions" role="group" data-i18n-aria-label="developer.group" aria-label="Déclencher une réaction de Chutzi">
+      <button class="developer-reaction" type="button" data-reaction="look" aria-pressed="false"><img src="assets/images/reactions/look.png" alt="" width="48" height="48"><span data-i18n="reaction.look">Regard</span></button>
+      <button class="developer-reaction" type="button" data-reaction="hop" aria-pressed="false"><img src="assets/images/reactions/hop.png" alt="" width="48" height="48"><span data-i18n="reaction.hop">Saut</span></button>
+      <button class="developer-reaction" type="button" data-reaction="think" aria-pressed="false"><img src="assets/images/reactions/think.png" alt="" width="48" height="48"><span data-i18n="reaction.think">Réflexion</span></button>
+      <button class="developer-reaction" type="button" data-reaction="chat" aria-pressed="false"><img src="assets/images/reactions/chat.png" alt="" width="48" height="48"><span data-i18n="reaction.chat">Bavardage</span></button>
+      <button class="developer-reaction" type="button" data-reaction="sleep" aria-pressed="false"><img src="assets/images/reactions/sleep.png" alt="" width="48" height="48"><span data-i18n="reaction.sleep">Sommeil</span></button>
+      <button class="developer-reaction" type="button" data-reaction="sing" aria-pressed="false"><img src="assets/images/reactions/sing.png" alt="" width="48" height="48"><span data-i18n="reaction.sing">Chant</span></button>
+      <button class="developer-reaction" type="button" data-reaction="devil" aria-pressed="false"><img src="assets/images/reactions/devil.png" alt="" width="48" height="48"><span data-i18n="reaction.devil">Diablotin</span></button>
+      <button class="developer-reaction" type="button" data-reaction="laugh" aria-pressed="false"><img src="assets/images/reactions/laugh.png" alt="" width="48" height="48"><span data-i18n="reaction.laugh">Rire</span></button>
+      <button class="developer-reaction" type="button" data-reaction="error" aria-pressed="false"><img src="assets/images/reactions/error.png" alt="" width="48" height="48"><span data-i18n="reaction.error">Erreur</span></button>
     </div>
-
     <p class="developer-shortcut"><kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>D</kbd></p>
   </aside>
 </body>

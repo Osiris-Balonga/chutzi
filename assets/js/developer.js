@@ -6,6 +6,7 @@ export function createDeveloperController({
   startButton,
   reactionButtons,
   mascot,
+  translate,
   onOpen,
   onClose,
   onStart
@@ -26,9 +27,7 @@ export function createDeveloperController({
       button.disabled = !reactionsAvailable;
     });
     startButton.hidden = reactionsAvailable;
-    hint.textContent = reactionsAvailable
-      ? "Choisis une réaction : elle se joue immédiatement."
-      : "Démarre le jeu pour débloquer les réactions.";
+    hint.textContent = translate(reactionsAvailable ? "developer.ready" : "developer.hint");
   }
 
   function stopReaction() {
