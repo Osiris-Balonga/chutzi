@@ -28,6 +28,14 @@ export interface LocalizedJoke {
   readonly delivery: string;
 }
 
+export interface VettedJoke extends LocalizedJoke {
+  readonly safety: {
+    readonly status: "approved";
+    readonly policyVersion: 1;
+    readonly reviewedAt: string;
+  };
+}
+
 export interface UserPreferences {
   readonly locale: Locale;
   readonly humourTone: HumourTone;

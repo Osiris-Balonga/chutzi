@@ -181,7 +181,7 @@ async function loadJoke({ withTransitionSound = false } = {}) {
   showView("loading");
 
   try {
-    const joke = await fetchJoke(preferences.locale);
+    const joke = await fetchJoke(preferences.locale, preferences.humourTone);
 
     if (requestId !== jokeRequestId) {
       return;

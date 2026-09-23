@@ -163,6 +163,13 @@
   line-height: 1.45;
 }
 
+.settings-privacy {
+  margin: -8px 0 2px;
+  color: var(--color-ink-muted);
+  font-size: 0.72rem;
+  line-height: 1.35;
+}
+
 .audio-settings {
   display: grid;
   gap: 10px;
