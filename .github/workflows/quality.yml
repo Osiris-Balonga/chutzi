@@ -44,15 +44,25 @@ jobs:
         with:
           node-version: 24
           check-latest: true
+          cache: npm
+
+      - name: Install development dependencies
+        run: npm ci
+
+      - name: Check TypeScript
+        run: npm run check
+
+      - name: Run unit tests
+        run: npm test
 
       - name: Reject whitespace errors
         run: git diff --check "$(git hash-object -t tree /dev/null)" HEAD
 
       - name: Parse browser modules
         run: |
-          for file in assets/js/*.js; do
+          while IFS= read -r -d '' file; do
             node --check "$file"
-          done
+          done < <(find assets/js -name '*.js' -print0)
 
       - name: Verify local HTML assets
         run: |
