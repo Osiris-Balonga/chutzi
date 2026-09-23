@@ -19,13 +19,12 @@ function createStore(initialValues = {}) {
   };
 }
 
-function createJoke(conceptId, locale = "en", tone = "safe", tags = ["wordplay"]) {
+function createJoke(conceptId, locale = "en", tone = "safe") {
   return {
     id: `${conceptId}-${locale}`,
     conceptId,
     locale,
     tone,
-    tags,
     setup: `Setup for ${conceptId}`,
     delivery: `Delivery for ${conceptId}`,
     safety: { status: "approved", policyVersion: 1, reviewedAt: "2026-09-23" }
@@ -76,7 +75,7 @@ test("persists bounded history and uses seeded randomness deterministically", ()
   const selector = createJokeSelector({ store, catalog, random: () => 0.999 });
 
   for (let index = 0; index < 60; index += 1) {
-    selector.next({ locale: "en", tone: "safe", tagWeights: { wordplay: 1 } });
+    selector.next({ locale: "en", tone: "safe" });
   }
 
   assert.ok(selector.getHistory().recentConceptIds.length <= 48);

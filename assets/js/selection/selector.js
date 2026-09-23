@@ -34,22 +34,10 @@ export function getCooldownLength(poolSize) {
     }
     return Math.min(8, Math.max(1, Math.ceil(poolSize * 0.45)));
 }
-function pickWeighted(jokes, tagWeights, random) {
-    const weights = jokes.map((joke) => {
-        const averagePreference = joke.tags.reduce((sum, tag) => sum + (tagWeights[tag] ?? 0), 0) / joke.tags.length;
-        return Math.max(0.7, Math.min(1.3, 1 + averagePreference * 0.15));
-    });
-    const totalWeight = weights.reduce((sum, weight) => sum + weight, 0);
-    let cursor = random() * totalWeight;
-    for (let index = 0; index < jokes.length; index += 1) {
-        cursor -= weights[index];
-        if (cursor <= 0) {
-            return jokes[index];
-        }
-    }
-    return jokes.at(-1);
+function pickRandom(jokes, random) {
+    return jokes[Math.min(jokes.length - 1, Math.floor(random() * jokes.length))];
 }
-function selectCandidate(pool, history, options, random) {
+function selectCandidate(pool, history, random) {
     const cooldown = getCooldownLength(pool.length);
     const recent = history.recentConceptIds.slice(0, cooldown);
     const lastConceptId = history.recentConceptIds[0];
@@ -61,10 +49,10 @@ function selectCandidate(pool, history, options, random) {
         const blockedConcepts = new Set(recent.slice(0, blockedCount));
         const candidates = protectedPool.filter((joke) => !blockedConcepts.has(joke.conceptId));
         if (candidates.length > 0) {
-            return pickWeighted(candidates, options.tagWeights ?? {}, random);
+            return pickRandom(candidates, random);
         }
     }
-    return pickWeighted(protectedPool, options.tagWeights ?? {}, random);
+    return pickRandom(protectedPool, random);
 }
 function updateHistory(history, joke) {
     const moveToFront = (entries) => [
@@ -81,11 +69,7 @@ function updateHistory(history, joke) {
     };
 }
 function queueKey(options) {
-    const weightSignature = Object.entries(options.tagWeights ?? {})
-        .sort(([first], [second]) => first.localeCompare(second))
-        .map(([tag, weight]) => `${tag}:${weight}`)
-        .join(",");
-    return `${options.locale}:${options.tone}:${weightSignature}`;
+    return `${options.locale}:${options.tone}`;
 }
 export function createJokeSelector({ store, catalog = JOKE_CATALOG, catalogVersion = "1", random = Math.random }) {
     const storedHistory = readStoredValue(store, HISTORY_STORAGE_KEY, isDeliveryHistory);
@@ -102,7 +86,7 @@ export function createJokeSelector({ store, catalog = JOKE_CATALOG, catalogVersi
             throw new Error(`No eligible local joke for ${options.locale}/${options.tone}`);
         }
         const remaining = pool.filter((joke) => !excludedConceptIds.includes(joke.conceptId));
-        return selectCandidate(remaining.length > 0 ? remaining : pool, history, options, random);
+        return selectCandidate(remaining.length > 0 ? remaining : pool, history, random);
     }
     function refillQueue(options, deliveredJoke) {
         const key = queueKey(options);

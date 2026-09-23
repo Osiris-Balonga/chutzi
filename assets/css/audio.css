@@ -1,5 +1,4 @@
 .audio-toggle {
-  position: relative;
   display: grid;
   width: 44px;
   height: 44px;
@@ -12,22 +11,8 @@
   cursor: pointer;
   font-size: 1.35rem;
   font-weight: 900;
-  transition-property: transform, background-color, box-shadow;
+  transition-property: transform, box-shadow;
   transition-duration: 160ms;
-  transition-timing-function: var(--ease-out);
-}
-
-.audio-status-dot {
-  position: absolute;
-  right: 1px;
-  bottom: 1px;
-  width: 11px;
-  height: 11px;
-  border: 2px solid var(--color-secondary);
-  border-radius: 50%;
-  background: var(--color-primary);
-  transition-property: background-color, scale;
-  transition-duration: 180ms;
   transition-timing-function: var(--ease-out);
 }
 
@@ -36,46 +21,7 @@
   box-shadow: 0 1px 0 rgb(255 255 255 / 20%);
 }
 
-.sound-off {
-  position: absolute;
-  opacity: 0;
-  scale: 0.25;
-  filter: blur(4px);
-}
-
-.sound-on,
-.sound-off {
-  transition-property: opacity, scale, filter;
-  transition-duration: 300ms;
-  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
-}
-
-.sound-on svg { width: 22px; height: 22px; display: block; }
-
-.audio-toggle.is-silent {
-  background: var(--color-danger);
-}
-
-.audio-toggle.is-silent .sound-on {
-  opacity: 0;
-  scale: 0.25;
-  filter: blur(4px);
-}
-
-.audio-toggle.is-silent .sound-off {
-  opacity: 1;
-  scale: 1;
-  filter: blur(0);
-}
-
-.audio-toggle.is-silent .audio-status-dot {
-  background: var(--color-danger);
-  scale: 0.75;
-}
-
-.audio-toggle.has-partial-audio .audio-status-dot {
-  background: var(--color-surface);
-}
+.audio-toggle svg { display: block; width: 22px; height: 22px; }
 
 .audio-dialog {
   width: min(calc(100% - 40px), 440px);
@@ -105,34 +51,48 @@
 }
 
 .audio-sheet {
+  display: flex;
+  flex-direction: column;
   max-height: min(90svh, 700px);
   border-radius: var(--radius-surface);
-  padding: 22px;
-  overflow-y: auto;
-  scrollbar-width: none;
+  overflow: hidden;
   background: var(--color-surface);
   box-shadow: 0 8px 0 rgb(7 15 54 / 22%);
   animation: audio-modal-in 220ms var(--ease-out) both;
 }
 
-.audio-sheet::-webkit-scrollbar { display: none; }
+.audio-sheet-content {
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  padding: 0 22px 22px;
+}
+
+.audio-sheet-content::-webkit-scrollbar { display: none; }
 
 .audio-dialog.is-closing .audio-sheet {
   animation: audio-modal-out 150ms ease-in both;
 }
 
 .audio-sheet-header {
-  position: sticky;
-  z-index: 1;
-  top: 0;
   display: flex;
+  flex: 0 0 auto;
   align-items: flex-start;
   justify-content: space-between;
   gap: 20px;
-  margin: -22px -22px 0;
   padding: 22px 22px 12px;
   background: var(--color-surface);
 }
+
+.onboarding-dialog .audio-sheet {
+  display: block;
+  overflow: auto;
+  scrollbar-width: none;
+  padding: 22px;
+}
+
+.onboarding-dialog .audio-sheet::-webkit-scrollbar { display: none; }
 
 .audio-sheet-kicker {
   margin-bottom: 3px;

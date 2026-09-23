@@ -2,14 +2,12 @@
   .audio-dialog {
     width: 100%;
     max-width: none;
-    max-height: min(82svh, 560px);
+    max-height: min(92svh, 620px);
     margin: auto 0 0;
   }
 
   .audio-sheet {
-    position: relative;
     border-radius: var(--radius-surface) var(--radius-surface) 0 0;
-    padding: 28px 20px calc(20px + env(safe-area-inset-bottom));
     animation-name: audio-sheet-in;
   }
 
@@ -24,6 +22,10 @@
     background: rgb(7 15 54 / 18%);
     transform: translateX(-50%);
   }
+
+  .audio-sheet-header { padding: 28px 20px 12px; }
+  .audio-sheet-content { padding: 0 20px calc(20px + env(safe-area-inset-bottom)); }
+  .onboarding-dialog .audio-sheet { padding: 28px 20px calc(20px + env(safe-area-inset-bottom)); }
 
   .audio-dialog.is-closing .audio-sheet {
     animation-name: audio-sheet-out;

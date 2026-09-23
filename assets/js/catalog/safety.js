@@ -1,4 +1,4 @@
-import { HUMOUR_TONES, JOKE_TAGS, SUPPORTED_LOCALES } from "../core/types.js";
+import { HUMOUR_TONES, SUPPORTED_LOCALES } from "../core/types.js";
 const BLOCKED_TERMS = [
     "abuse", "assault", "blood", "cannabis", "crime", "dead", "death", "drug", "gun", "hate",
     "kill", "murder", "naked", "penis", "porn", "rape", "racis", "sex", "shoot", "suicid",
@@ -28,10 +28,7 @@ export function isVettedJoke(value) {
         || !isNonEmptyString(joke.setup)
         || !isNonEmptyString(joke.delivery)
         || !SUPPORTED_LOCALES.includes(joke.locale)
-        || !HUMOUR_TONES.includes(joke.tone)
-        || !Array.isArray(joke.tags)
-        || joke.tags.length === 0
-        || !joke.tags.every((tag) => JOKE_TAGS.includes(tag))) {
+        || !HUMOUR_TONES.includes(joke.tone)) {
         return false;
     }
     return joke.safety?.status === "approved"

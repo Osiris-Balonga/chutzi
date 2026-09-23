@@ -1,7 +1,7 @@
 import { filterEligibleJokes } from "../catalog/catalog.js";
 import { JOKE_CATALOG } from "../catalog/jokes.js";
 import { readStoredValue, writeStoredValue, type KeyValueStore } from "../core/storage.js";
-import type { HumourTone, JokeTag, Locale, VettedJoke } from "../core/types.js";
+import type { HumourTone, Locale, VettedJoke } from "../core/types.js";
 
 const HISTORY_STORAGE_KEY = "chutzi-delivery-history-v1";
 const HISTORY_VERSION = 1;
@@ -17,7 +17,6 @@ interface DeliveryHistory {
 export interface SelectionOptions {
   readonly locale: Locale;
   readonly tone: HumourTone;
-  readonly tagWeights?: Readonly<Partial<Record<JokeTag, number>>>;
 }
 
 export interface JokeSelectorOptions {
@@ -63,32 +62,13 @@ export function getCooldownLength(poolSize: number): number {
   return Math.min(8, Math.max(1, Math.ceil(poolSize * 0.45)));
 }
 
-function pickWeighted(
-  jokes: readonly VettedJoke[],
-  tagWeights: Readonly<Partial<Record<JokeTag, number>>>,
-  random: () => number
-): VettedJoke {
-  const weights = jokes.map((joke) => {
-    const averagePreference = joke.tags.reduce((sum, tag) => sum + (tagWeights[tag] ?? 0), 0) / joke.tags.length;
-    return Math.max(0.7, Math.min(1.3, 1 + averagePreference * 0.15));
-  });
-  const totalWeight = weights.reduce((sum, weight) => sum + weight, 0);
-  let cursor = random() * totalWeight;
-
-  for (let index = 0; index < jokes.length; index += 1) {
-    cursor -= weights[index];
-    if (cursor <= 0) {
-      return jokes[index];
-    }
-  }
-
-  return jokes.at(-1) as VettedJoke;
+function pickRandom(jokes: readonly VettedJoke[], random: () => number): VettedJoke {
+  return jokes[Math.min(jokes.length - 1, Math.floor(random() * jokes.length))];
 }
 
 function selectCandidate(
   pool: readonly VettedJoke[],
   history: DeliveryHistory,
-  options: SelectionOptions,
   random: () => number
 ): VettedJoke {
   const cooldown = getCooldownLength(pool.length);
@@ -103,11 +83,11 @@ function selectCandidate(
     const blockedConcepts = new Set(recent.slice(0, blockedCount));
     const candidates = protectedPool.filter((joke) => !blockedConcepts.has(joke.conceptId));
     if (candidates.length > 0) {
-      return pickWeighted(candidates, options.tagWeights ?? {}, random);
+      return pickRandom(candidates, random);
     }
   }
 
-  return pickWeighted(protectedPool, options.tagWeights ?? {}, random);
+  return pickRandom(protectedPool, random);
 }
 
 function updateHistory(history: DeliveryHistory, joke: VettedJoke): DeliveryHistory {
@@ -127,11 +107,7 @@ function updateHistory(history: DeliveryHistory, joke: VettedJoke): DeliveryHist
 }
 
 function queueKey(options: SelectionOptions): string {
-  const weightSignature = Object.entries(options.tagWeights ?? {})
-    .sort(([first], [second]) => first.localeCompare(second))
-    .map(([tag, weight]) => `${tag}:${weight}`)
-    .join(",");
-  return `${options.locale}:${options.tone}:${weightSignature}`;
+  return `${options.locale}:${options.tone}`;
 }
 
 export function createJokeSelector({
@@ -157,7 +133,7 @@ export function createJokeSelector({
     }
 
     const remaining = pool.filter((joke) => !excludedConceptIds.includes(joke.conceptId));
-    return selectCandidate(remaining.length > 0 ? remaining : pool, history, options, random);
+    return selectCandidate(remaining.length > 0 ? remaining : pool, history, random);
   }
 
   function refillQueue(options: SelectionOptions, deliveredJoke: VettedJoke): void {
