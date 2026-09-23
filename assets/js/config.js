@@ -1,32 +1,3 @@
-const JOKE_API_BASE_URL = "https://v2.jokeapi.dev/joke/Any";
-
-export function getJokeApiUrl(locale) {
-  const parameters = new URLSearchParams({
-    lang: locale,
-    type: "twopart",
-    "safe-mode": "",
-    amount: "10"
-  });
-
-  return `${JOKE_API_BASE_URL}?${parameters.toString()}`;
-}
-
-export const EXCLUDED_TERMS = [
-  "sodom",
-  "sexe",
-  "penis",
-  "vagin",
-  "porno",
-  "bite",
-  "couille",
-  "pute",
-  "drogue",
-  "cannabis",
-  "alcool",
-  "biere",
-  "viol"
-];
-
 export const AUDIO_CONFIG = {
   music: {
     path: "assets/audio/background-music.mp3",
