@@ -116,15 +116,11 @@ export function createAudioController({ app, menuButton, musicToggle, effectsTog
   }
 
   function updateControls() {
-    const allDisabled = !musicEnabled && !effectsEnabled;
-    const partiallyEnabled = musicEnabled !== effectsEnabled;
-    const musicState = translate(musicEnabled ? "audio.enabled" : "audio.disabled");
-    const effectsState = translate(effectsEnabled ? "audio.enabled" : "audio.disabled");
+    const musicState = translate(musicEnabled ? "audio.musicEnabled" : "audio.musicDisabled");
+    const effectsState = translate(effectsEnabled ? "audio.effectsEnabled" : "audio.effectsDisabled");
 
     musicToggle.setAttribute("aria-checked", String(musicEnabled));
     effectsToggle.setAttribute("aria-checked", String(effectsEnabled));
-    menuButton.classList.toggle("is-silent", allDisabled);
-    menuButton.classList.toggle("has-partial-audio", partiallyEnabled);
     menuButton.setAttribute(
       "aria-label",
       translate("audio.openLabel", { music: musicState, effects: effectsState })

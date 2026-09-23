@@ -4,8 +4,6 @@ import { fetchJoke, resetJokeHistory } from "./jokes.js";
 import { createMascotController } from "./mascot.js";
 import { createPreferencesStore, resolveBrowserLocale } from "./core/preferences.js";
 import { getFeedbackPrompt, translate } from "./core/i18n.js";
-import { createProfileStore, getDominantTag, getTagWeights } from "./profile/profile.js";
-import { JOKE_TAGS } from "./core/types.js";
 
 const elements = {
   app: document.querySelector("#app"),
@@ -23,14 +21,6 @@ const elements = {
   feedbackPrompt: document.querySelector("#feedback-prompt"),
   feedbackButtons: [...document.querySelectorAll("[data-feedback-rating]")],
   feedbackSkipButton: document.querySelector("#feedback-skip-button"),
-  profileButton: document.querySelector("#profile-button"),
-  profilePanel: document.querySelector("#profile-panel"),
-  profileBackButton: document.querySelector("#profile-back-button"),
-  profileCopy: document.querySelector("#profile-copy"),
-  profileDonut: document.querySelector("#profile-donut"),
-  profileMascotImage: document.querySelector("#profile-mascot-image"),
-  profileLegend: document.querySelector("#profile-legend"),
-  profileResetButton: document.querySelector("#profile-reset-button"),
   mascot: document.querySelector("#mascot"),
   audioMenuButton: document.querySelector("#audio-menu-button"),
   audioDialog: document.querySelector("#audio-dialog"),
@@ -72,8 +62,7 @@ const browserStorage = {
 
 const preferenceStore = createPreferencesStore(browserStorage, resolveBrowserLocale(navigator.language));
 let preferences = preferenceStore.get();
-const profileStore = createProfileStore(browserStorage);
-let profile = profileStore.get();
+browserStorage.removeItem("chutzi-humour-profile-v1");
 
 function t(key, values) {
   return translate(preferences.locale, key, values);
@@ -91,18 +80,15 @@ const mascot = createMascotController({
   app: elements.app,
   mascot: elements.mascot,
   audioDialog: elements.audioDialog,
-  audio,
-  isMischievousProfile: () => getDominantTag(profile) === "gentle-spooky"
+  audio
 });
 
 let loadedJokeCount = 0;
 let dialogCloseTimer = null;
+let audioDialogReturnFocus = null;
 let musicPausedByVisibility = false;
 let jokeRequestId = 0;
 let promptIndex = 0;
-let currentJoke = null;
-let profileReturnView = "welcome";
-let profileMascotIndex = 0;
 let developer;
 
 function applyTranslations() {
@@ -121,9 +107,6 @@ function applyTranslations() {
 
   audio.updateControls();
   developer?.sync();
-  if (elements.app.dataset.state === "profile") {
-    renderProfile();
-  }
 }
 
 function syncPreferenceControls() {
@@ -163,7 +146,7 @@ function closeAudioDialog({ restoreFocus = true } = {}) {
     if (developer.isEnabled()) {
       elements.developerClose.focus();
     } else {
-      elements.audioMenuButton.focus();
+      (audioDialogReturnFocus?.isConnected ? audioDialogReturnFocus : elements.audioMenuButton).focus();
       mascot.scheduleIdle();
     }
   }, 160);
@@ -171,6 +154,7 @@ function closeAudioDialog({ restoreFocus = true } = {}) {
 
 function openAudioDialog() {
   window.clearTimeout(dialogCloseTimer);
+  audioDialogReturnFocus = document.activeElement;
   developer.stopReaction();
   elements.audioDialog.classList.remove("is-closing");
   elements.audioDialog.showModal();
@@ -186,66 +170,12 @@ function showView(name) {
   elements.revealButton.hidden = name !== "question";
   elements.jokeActions.hidden = name !== "revealed";
   elements.feedbackPanel.hidden = true;
-  elements.profilePanel.hidden = true;
   elements.app.dataset.state = name;
   developer.sync();
 
   if (name === "question" || name === "revealed") {
     mascot.scheduleIdle();
   }
-}
-
-function renderProfile() {
-  const weights = getTagWeights(profile);
-  const segments = JOKE_TAGS.map((tag) => Math.max(1, 1 + weights[tag]));
-  const colors = ["#b2eb06", "#899dfe", "#ffd36e", "#f7a7d6", "#ff8b93"];
-  const total = segments.reduce((sum, value) => sum + value, 0);
-  let cursor = 0;
-  const gradient = segments.map((segment, index) => {
-    const start = cursor;
-    cursor += segment / total * 100;
-    return `${colors[index]} ${start}% ${cursor}%`;
-  }).join(", ");
-  const dominant = getDominantTag(profile);
-  const mascotImages = dominant === "gentle-spooky"
-    ? ["devil.png", "laugh.png"]
-    : dominant ? ["laugh.png", "chat.png"] : ["look.png", "think.png"];
-
-  elements.profileDonut.style.background = `conic-gradient(${gradient})`;
-  elements.profileMascotImage.src = `assets/images/reactions/${mascotImages[profileMascotIndex % mascotImages.length]}`;
-  elements.profileCopy.textContent = profile.feedback.length === 0
-    ? t("profile.empty")
-    : profile.feedback.length < 4 ? t("profile.early") : t("profile.established");
-  elements.profileLegend.replaceChildren(...JOKE_TAGS.map((tag) => {
-    const item = document.createElement("li");
-    item.textContent = t(`tag.${tag}`);
-    return item;
-  }));
-}
-
-function openProfile() {
-  profileReturnView = elements.gamePanel.hidden ? "welcome" : elements.app.dataset.state;
-  developer.stopReaction();
-  elements.welcomePanel.hidden = true;
-  elements.gamePanel.hidden = true;
-  elements.profilePanel.hidden = false;
-  elements.app.dataset.state = "profile";
-  renderProfile();
-  elements.profileBackButton.focus();
-}
-
-function closeProfile() {
-  elements.profilePanel.hidden = true;
-  if (profileReturnView === "welcome") {
-    elements.welcomePanel.hidden = false;
-    elements.app.dataset.state = "welcome";
-    elements.profileButton.focus();
-    return;
-  }
-
-  elements.gamePanel.hidden = false;
-  showView(profileReturnView);
-  elements.profileButton.focus();
 }
 
 async function loadJoke({ withTransitionSound = false } = {}) {
@@ -260,14 +190,13 @@ async function loadJoke({ withTransitionSound = false } = {}) {
   showView("loading");
 
   try {
-    const joke = await fetchJoke(preferences.locale, preferences.humourTone, getTagWeights(profile));
+    const joke = await fetchJoke(preferences.locale, preferences.humourTone);
 
     if (requestId !== jokeRequestId) {
       return;
     }
 
     loadedJokeCount += 1;
-    currentJoke = joke;
     elements.jokeQuestion.textContent = joke.setup;
     elements.jokeDelivery.textContent = joke.delivery;
     showView("question");
@@ -316,18 +245,6 @@ function finishFeedback() {
 }
 
 function submitFeedback(rating) {
-  if (!currentJoke) {
-    finishFeedback();
-    return;
-  }
-
-  profile = profileStore.record({
-    conceptId: currentJoke.conceptId,
-    rating,
-    tags: currentJoke.tags,
-    createdAt: Date.now()
-  });
-
   mascot.trigger(rating === "love" ? "laugh" : rating === "skip" ? "think" : "chat");
   finishFeedback();
 }
@@ -380,19 +297,6 @@ elements.feedbackButtons.forEach((button) => {
   button.addEventListener("click", () => submitFeedback(button.dataset.feedbackRating));
 });
 elements.feedbackSkipButton.addEventListener("click", finishFeedback);
-elements.profileButton.addEventListener("click", openProfile);
-elements.profileBackButton.addEventListener("click", closeProfile);
-elements.profileDonut.addEventListener("click", () => {
-  profileMascotIndex += 1;
-  renderProfile();
-});
-elements.profileResetButton.addEventListener("click", () => {
-  if (window.confirm(t("profile.resetConfirm"))) {
-    profile = profileStore.clear();
-    profileMascotIndex = 0;
-    renderProfile();
-  }
-});
 
 document.querySelectorAll("[data-locale-choice]").forEach((button) => {
   button.addEventListener("click", () => updatePreferences({ locale: button.dataset.localeChoice }));

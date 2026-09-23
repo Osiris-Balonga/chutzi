@@ -26,8 +26,8 @@ const browserStorage = {
 
 const selector = createJokeSelector({ store: browserStorage });
 
-export async function fetchJoke(locale, tone, tagWeights) {
-  return selector.next({ locale, tone, tagWeights });
+export async function fetchJoke(locale, tone) {
+  return selector.next({ locale, tone });
 }
 
 export function resetJokeHistory() {

@@ -1,6 +1,5 @@
 import {
   HUMOUR_TONES,
-  JOKE_TAGS,
   SUPPORTED_LOCALES,
   type VettedJoke
 } from "../core/types.js";
@@ -39,10 +38,7 @@ export function isVettedJoke(value: unknown): value is VettedJoke {
     || !isNonEmptyString(joke.setup)
     || !isNonEmptyString(joke.delivery)
     || !SUPPORTED_LOCALES.includes(joke.locale as (typeof SUPPORTED_LOCALES)[number])
-    || !HUMOUR_TONES.includes(joke.tone as (typeof HUMOUR_TONES)[number])
-    || !Array.isArray(joke.tags)
-    || joke.tags.length === 0
-    || !joke.tags.every((tag) => JOKE_TAGS.includes(tag))) {
+    || !HUMOUR_TONES.includes(joke.tone as (typeof HUMOUR_TONES)[number])) {
     return false;
   }
 
