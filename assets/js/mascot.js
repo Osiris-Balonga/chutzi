@@ -21,7 +21,7 @@ function chooseWeightedReaction(reactions) {
   return reactions.at(-1);
 }
 
-export function createMascotController({ app, mascot, audioDialog, audio }) {
+export function createMascotController({ app, mascot, audioDialog, audio, isMischievousProfile = () => false }) {
   let idleTimer = null;
   let reactionTimer = null;
   let activeSound = null;
@@ -97,6 +97,11 @@ export function createMascotController({ app, mascot, audioDialog, audio }) {
     }
 
     const alternatives = IDLE_REACTIONS.filter(({ name }) => name !== lastIdleReaction);
+    if (isMischievousProfile() && lastIdleReaction !== "devil" && Math.random() < 0.38) {
+      lastIdleReaction = "devil";
+      trigger("devil", { playSound: Math.random() < 0.45 });
+      return;
+    }
     const selection = chooseWeightedReaction(alternatives);
     lastIdleReaction = selection.name;
     trigger(selection.name, { playSound: Math.random() <= selection.soundChance });

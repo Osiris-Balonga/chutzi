@@ -82,6 +82,16 @@
               <p id="joke-delivery"></p>
             </div>
             <button class="button button-primary" id="reveal-button" type="button" data-i18n="joke.reveal">Afficher la réponse</button>
+            <section class="feedback-panel" id="feedback-panel" aria-labelledby="feedback-prompt" hidden>
+              <p class="feedback-kicker" id="feedback-prompt">Alors, elle était bonne hein ?</p>
+              <div class="feedback-reactions" role="group" data-i18n-aria-label="feedback.title" aria-label="Alors, elle était bonne hein ?">
+                <button class="feedback-reaction" type="button" data-feedback-rating="love" data-i18n-aria-label="feedback.love" aria-label="Très drôle !"><img src="assets/images/reactions/laugh.png" alt="" width="52" height="52"><span data-i18n="feedback.love">Très drôle !</span></button>
+                <button class="feedback-reaction" type="button" data-feedback-rating="like" data-i18n-aria-label="feedback.like" aria-label="J'adore"><img src="assets/images/reactions/chat.png" alt="" width="52" height="52"><span data-i18n="feedback.like">J'adore</span></button>
+                <button class="feedback-reaction" type="button" data-feedback-rating="neutral" data-i18n-aria-label="feedback.neutral" aria-label="Je ne sais pas trop"><img src="assets/images/reactions/think.png" alt="" width="52" height="52"><span data-i18n="feedback.neutral">Je ne sais pas trop</span></button>
+                <button class="feedback-reaction" type="button" data-feedback-rating="skip" data-i18n-aria-label="feedback.skipRating" aria-label="Pas mon style"><img src="assets/images/reactions/error.png" alt="" width="52" height="52"><span data-i18n="feedback.skipRating">Pas mon style</span></button>
+              </div>
+              <button class="feedback-skip" id="feedback-skip-button" type="button" data-i18n="feedback.skip">Pas maintenant</button>
+            </section>
             <div class="joke-actions" id="joke-actions" hidden>
               <button class="button button-primary" id="another-button" type="button" data-i18n="joke.another">Une autre</button>
               <button class="button button-secondary" id="quit-button" type="button" data-i18n="joke.quit">Quitter</button>

@@ -3,7 +3,8 @@ import { createDeveloperController } from "./developer.js";
 import { fetchJoke, resetJokeHistory } from "./jokes.js";
 import { createMascotController } from "./mascot.js";
 import { createPreferencesStore, resolveBrowserLocale } from "./core/preferences.js";
-import { translate } from "./core/i18n.js";
+import { getFeedbackPrompt, translate } from "./core/i18n.js";
+import { createProfileStore, getDominantTag, getTagWeights } from "./profile/profile.js";
 
 const elements = {
   app: document.querySelector("#app"),
@@ -17,6 +18,10 @@ const elements = {
   jokeDelivery: document.querySelector("#joke-delivery"),
   revealButton: document.querySelector("#reveal-button"),
   jokeActions: document.querySelector("#joke-actions"),
+  feedbackPanel: document.querySelector("#feedback-panel"),
+  feedbackPrompt: document.querySelector("#feedback-prompt"),
+  feedbackButtons: [...document.querySelectorAll("[data-feedback-rating]")],
+  feedbackSkipButton: document.querySelector("#feedback-skip-button"),
   mascot: document.querySelector("#mascot"),
   audioMenuButton: document.querySelector("#audio-menu-button"),
   audioDialog: document.querySelector("#audio-dialog"),
@@ -58,6 +63,8 @@ const browserStorage = {
 
 const preferenceStore = createPreferencesStore(browserStorage, resolveBrowserLocale(navigator.language));
 let preferences = preferenceStore.get();
+const profileStore = createProfileStore(browserStorage);
+let profile = profileStore.get();
 
 function t(key, values) {
   return translate(preferences.locale, key, values);
@@ -75,13 +82,16 @@ const mascot = createMascotController({
   app: elements.app,
   mascot: elements.mascot,
   audioDialog: elements.audioDialog,
-  audio
+  audio,
+  isMischievousProfile: () => getDominantTag(profile) === "gentle-spooky"
 });
 
 let loadedJokeCount = 0;
 let dialogCloseTimer = null;
 let musicPausedByVisibility = false;
 let jokeRequestId = 0;
+let promptIndex = 0;
+let currentJoke = null;
 let developer;
 
 function applyTranslations() {
@@ -161,6 +171,7 @@ function showView(name) {
   elements.jokeAnswer.hidden = name !== "revealed";
   elements.revealButton.hidden = name !== "question";
   elements.jokeActions.hidden = name !== "revealed";
+  elements.feedbackPanel.hidden = true;
   elements.app.dataset.state = name;
   developer.sync();
 
@@ -181,13 +192,14 @@ async function loadJoke({ withTransitionSound = false } = {}) {
   showView("loading");
 
   try {
-    const joke = await fetchJoke(preferences.locale, preferences.humourTone);
+    const joke = await fetchJoke(preferences.locale, preferences.humourTone, getTagWeights(profile));
 
     if (requestId !== jokeRequestId) {
       return;
     }
 
     loadedJokeCount += 1;
+    currentJoke = joke;
     elements.jokeQuestion.textContent = joke.setup;
     elements.jokeDelivery.textContent = joke.delivery;
     showView("question");
@@ -220,9 +232,36 @@ function startGame() {
 
 function revealAnswer() {
   showView("revealed");
+  elements.jokeActions.hidden = true;
+  elements.feedbackPanel.hidden = false;
+  elements.feedbackPrompt.textContent = getFeedbackPrompt(preferences.locale, promptIndex);
+  promptIndex += 1;
   const laugh = Math.random() < 0.24 ? "mischievousLaugh" : "laugh";
   mascot.trigger("laugh", { sound: laugh });
+  elements.feedbackButtons[0].focus();
+}
+
+function finishFeedback() {
+  elements.feedbackPanel.hidden = true;
+  elements.jokeActions.hidden = false;
   document.querySelector("#another-button").focus();
+}
+
+function submitFeedback(rating) {
+  if (!currentJoke) {
+    finishFeedback();
+    return;
+  }
+
+  profile = profileStore.record({
+    conceptId: currentJoke.conceptId,
+    rating,
+    tags: currentJoke.tags,
+    createdAt: Date.now()
+  });
+
+  mascot.trigger(rating === "love" ? "laugh" : rating === "skip" ? "think" : "chat");
+  finishFeedback();
 }
 
 function quitGame() {
@@ -269,6 +308,10 @@ document.querySelector("#another-button").addEventListener("click", () => loadJo
 document.querySelector("#retry-button").addEventListener("click", () => loadJoke({ withTransitionSound: true }));
 document.querySelector("#quit-button").addEventListener("click", quitGame);
 document.querySelector("#error-quit-button").addEventListener("click", quitGame);
+elements.feedbackButtons.forEach((button) => {
+  button.addEventListener("click", () => submitFeedback(button.dataset.feedbackRating));
+});
+elements.feedbackSkipButton.addEventListener("click", finishFeedback);
 
 document.querySelectorAll("[data-locale-choice]").forEach((button) => {
   button.addEventListener("click", () => updatePreferences({ locale: button.dataset.localeChoice }));
