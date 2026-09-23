@@ -1,9 +1,9 @@
 export function readStoredValue(store, key, isValid) {
-    const rawValue = store.getItem(key);
-    if (rawValue === null) {
-        return undefined;
-    }
     try {
+        const rawValue = store.getItem(key);
+        if (rawValue === null) {
+            return undefined;
+        }
         const parsedValue = JSON.parse(rawValue);
         return isValid(parsedValue) ? parsedValue : undefined;
     }
@@ -12,8 +12,20 @@ export function readStoredValue(store, key, isValid) {
     }
 }
 export function writeStoredValue(store, key, value) {
-    store.setItem(key, JSON.stringify(value));
+    try {
+        store.setItem(key, JSON.stringify(value));
+        return true;
+    }
+    catch {
+        return false;
+    }
 }
 export function removeStoredValue(store, key) {
-    store.removeItem(key);
+    try {
+        store.removeItem(key);
+        return true;
+    }
+    catch {
+        return false;
+    }
 }

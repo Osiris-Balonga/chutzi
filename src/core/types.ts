@@ -31,7 +31,6 @@ export interface LocalizedJoke {
 export interface UserPreferences {
   readonly locale: Locale;
   readonly humourTone: HumourTone;
-  readonly audioEnabled: boolean;
   readonly onboardingCompleted: boolean;
 }
 

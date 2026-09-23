@@ -1,4 +1,15 @@
-export const JOKE_API_URL = "https://v2.jokeapi.dev/joke/Any?lang=fr&type=twopart&safe-mode&amount=10";
+const JOKE_API_BASE_URL = "https://v2.jokeapi.dev/joke/Any";
+
+export function getJokeApiUrl(locale) {
+  const parameters = new URLSearchParams({
+    lang: locale,
+    type: "twopart",
+    "safe-mode": "",
+    amount: "10"
+  });
+
+  return `${JOKE_API_BASE_URL}?${parameters.toString()}`;
+}
 
 export const EXCLUDED_TERMS = [
   "sodom",

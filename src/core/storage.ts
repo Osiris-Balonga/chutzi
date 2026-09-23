@@ -11,13 +11,13 @@ export function readStoredValue<T>(
   key: string,
   isValid: ValueGuard<T>
 ): T | undefined {
-  const rawValue = store.getItem(key);
-
-  if (rawValue === null) {
-    return undefined;
-  }
-
   try {
+    const rawValue = store.getItem(key);
+
+    if (rawValue === null) {
+      return undefined;
+    }
+
     const parsedValue: unknown = JSON.parse(rawValue);
     return isValid(parsedValue) ? parsedValue : undefined;
   } catch {
@@ -25,10 +25,20 @@ export function readStoredValue<T>(
   }
 }
 
-export function writeStoredValue<T>(store: KeyValueStore, key: string, value: T): void {
-  store.setItem(key, JSON.stringify(value));
+export function writeStoredValue<T>(store: KeyValueStore, key: string, value: T): boolean {
+  try {
+    store.setItem(key, JSON.stringify(value));
+    return true;
+  } catch {
+    return false;
+  }
 }
 
-export function removeStoredValue(store: KeyValueStore, key: string): void {
-  store.removeItem(key);
+export function removeStoredValue(store: KeyValueStore, key: string): boolean {
+  try {
+    store.removeItem(key);
+    return true;
+  } catch {
+    return false;
+  }
 }
