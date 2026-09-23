@@ -82,13 +82,10 @@
   max-height: min(90svh, 700px);
   border: 0;
   padding: 0;
-  overflow: auto;
-  scrollbar-width: none;
+  overflow: hidden;
   background: transparent;
   color: var(--color-ink);
 }
-
-.audio-dialog::-webkit-scrollbar { display: none; }
 
 .audio-dialog[open] {
   animation: dialog-fade-in 180ms var(--ease-out) both;
@@ -108,12 +105,17 @@
 }
 
 .audio-sheet {
+  max-height: min(90svh, 700px);
   border-radius: var(--radius-surface);
   padding: 22px;
+  overflow-y: auto;
+  scrollbar-width: none;
   background: var(--color-surface);
   box-shadow: 0 8px 0 rgb(7 15 54 / 22%);
   animation: audio-modal-in 220ms var(--ease-out) both;
 }
+
+.audio-sheet::-webkit-scrollbar { display: none; }
 
 .audio-dialog.is-closing .audio-sheet {
   animation: audio-modal-out 150ms ease-in both;
@@ -122,12 +124,13 @@
 .audio-sheet-header {
   position: sticky;
   z-index: 1;
-  top: -22px;
+  top: 0;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 20px;
-  padding: 22px 0 12px;
+  margin: -22px -22px 0;
+  padding: 22px 22px 12px;
   background: var(--color-surface);
 }
 
