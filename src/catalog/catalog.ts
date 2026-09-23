@@ -8,10 +8,18 @@ const TONE_RANK: Record<HumourTone, number> = {
   mischievous: 2
 };
 
-export function getEligibleJokes(locale: Locale, tone: HumourTone): readonly VettedJoke[] {
-  return JOKE_CATALOG.filter((joke) => isVettedJoke(joke)
+export function filterEligibleJokes(
+  catalog: readonly VettedJoke[],
+  locale: Locale,
+  tone: HumourTone
+): readonly VettedJoke[] {
+  return catalog.filter((joke) => isVettedJoke(joke)
     && joke.locale === locale
     && TONE_RANK[joke.tone] <= TONE_RANK[tone]);
+}
+
+export function getEligibleJokes(locale: Locale, tone: HumourTone): readonly VettedJoke[] {
+  return filterEligibleJokes(JOKE_CATALOG, locale, tone);
 }
 
 export function getSafeFallback(locale: Locale): VettedJoke {
