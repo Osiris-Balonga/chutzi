@@ -18,7 +18,7 @@ Chutzi is a small playful experience with editorially reviewed French and Englis
 - offers French and English interface and joke content;
 - stores language and humour-tone choices locally after a one-time onboarding;
 - selects from a bundled, reviewed joke catalog instead of trusting runtime API responses;
-- guides the player from setup to punchline, then to another joke or the home screen;
+- guides the player from setup to punchline, then to a simple reaction and another joke or the home screen;
 - applies a non-negotiable safety policy to every catalog record;
 - brings an animated mascot to life with contextual reactions and idle animations;
 - uses anticipation, squash-and-stretch and a grounded shadow for jumps;
@@ -30,11 +30,10 @@ Chutzi is a small playful experience with editorially reviewed French and Englis
 
 ## User flow
 
-1. Select **Start**.
-2. Wait for a joke to load.
-3. Read the setup.
-4. Select **Show the answer**.
-5. Choose **Another** or **Quit**.
+1. Choose a language and humour tone on the first visit.
+2. Select **Start** and read the setup.
+3. Select **Show the answer** to reveal the punchline.
+4. React to the joke, then choose **Another** or **Quit**.
 
 ## Technology
 
@@ -120,7 +119,7 @@ Open it in either of these ways:
 
 ## Safety and privacy
 
-The application never requests jokes from a third party. Each bundled joke is manually marked as approved, carries a language, tone and humour tags, and must pass the catalog safety policy before it can be shown. Unknown or malformed records fail closed.
+The application never requests jokes from a third party. Each bundled joke is manually marked as approved, carries a language and tone, and must pass the catalog safety policy before it can be shown. Unknown or malformed records fail closed.
 
 Preferences stay in the browser. Chutzi has no account, analytics backend, or required server and does not collect personal data.
 
